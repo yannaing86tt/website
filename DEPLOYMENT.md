@@ -1,7 +1,7 @@
 # Deployment Information
 
 ## Server Details
-- **VPS IP:** 178.128.16.73
+- **VPS IP:** 
 - **Domain:** https://thunnwathanlin.tech
 - **OS:** Ubuntu 22.04.5 LTS
 - **Python:** 3.10+
