@@ -2,12 +2,18 @@ from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.utils.text import slugify
+from django.contrib import messages
 
 from .models import Post
 
 
 def is_staff(user):
     return user.is_authenticated and user.is_staff
+
+
+def can_delete_posts(user):
+    """Only superadmins can delete posts"""
+    return user.is_authenticated and user.is_superuser
 
 
 def make_slug(raw: str) -> str:
@@ -28,7 +34,12 @@ def post_list(request):
     if status in ("draft", "published"):
         posts = posts.filter(status=status)
 
-    return render(request, "panel/posts_list.html", {"posts": posts, "q": q, "status": status})
+    return render(request, "panel/posts_list.html", {
+        "posts": posts, 
+        "q": q, 
+        "status": status,
+        "can_delete": can_delete_posts(request.user)
+    })
 
 
 @user_passes_test(is_staff, login_url="/panel/login/")
@@ -65,6 +76,7 @@ def post_create(request):
                 author=request.user,
                 published_at=timezone.now() if status == "published" else None,
             )
+            messages.success(request, f"Post '{title}' created successfully!")
             return redirect("/panel/posts/")
 
     return render(request, "panel/post_form.html", {"mode": "create", "post": None, "error": error})
@@ -103,17 +115,21 @@ def post_edit(request, post_id):
                 post.published_at = None
 
             post.save()
+            messages.success(request, f"Post '{post.title}' updated successfully!")
             return redirect("/panel/posts/")
 
     return render(request, "panel/post_form.html", {"mode": "edit", "post": post, "error": error})
 
 
-@user_passes_test(is_staff, login_url="/panel/login/")
+@user_passes_test(can_delete_posts, login_url="/panel/")
 def post_delete(request, post_id):
+    """Only superadmins can delete posts"""
     post = get_object_or_404(Post, id=post_id)
 
     if request.method == "POST":
+        title = post.title
         post.delete()
+        messages.success(request, f"Post '{title}' deleted successfully!")
         return redirect("/panel/posts/")
 
     return render(request, "panel/post_delete.html", {"post": post})

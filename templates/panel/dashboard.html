@@ -3,12 +3,113 @@
 {% block title %}Dashboard{% endblock %}
 
 {% block content %}
-  <h2 style="margin-top:0;">Dashboard</h2>
-  <p>Welcome, <b>{{ request.user.username }}</b> ✅</p>
+<div class="content-header">
+  <h1 class="content-title">Dashboard</h1>
+  <p class="content-subtitle">Welcome back, <strong>{{ request.user.username }}</strong>! Here's what's happening today.</p>
+</div>
 
-  <ul>
-    <li><a href="/panel/posts/">Posts</a></li>
-    <li>Media (next)</li>
-    <li>Users/Roles (next)</li>
-  </ul>
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-icon">📝</div>
+    <div class="stat-label">Total Posts</div>
+    <div class="stat-value">{{ total_posts }}</div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-icon">✅</div>
+    <div class="stat-label">Published</div>
+    <div class="stat-value">{{ published_posts }}</div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-icon">📋</div>
+    <div class="stat-label">Drafts</div>
+    <div class="stat-value">{{ draft_posts }}</div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-icon">🎬</div>
+    <div class="stat-label">Media Items</div>
+    <div class="stat-value">{{ total_media }}</div>
+  </div>
+</div>
+
+<div class="content-body">
+  <h2 style="margin-bottom: 20px; font-size: 20px; font-weight: 600;">Quick Actions</h2>
+  
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px;">
+    <a href="/panel/posts/new/" class="btn btn-primary" style="justify-content: center;">
+      ➕ Create New Post
+    </a>
+    
+    <a href="/panel/posts/" class="btn btn-secondary" style="justify-content: center;">
+      📝 View All Posts
+    </a>
+    
+    <a href="/panel/media/" class="btn btn-secondary" style="justify-content: center;">
+      🎬 Manage Media
+    </a>
+    
+    {% if request.user.is_superuser %}
+    <a href="/panel/users/" class="btn btn-secondary" style="justify-content: center;">
+      👥 Manage Users
+    </a>
+    {% endif %}
+  </div>
+  
+  <h2 style="margin-bottom: 16px; font-size: 20px; font-weight: 600;">Recent Activity</h2>
+  
+  {% if recent_posts %}
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      {% for post in recent_posts %}
+        <div style="background: rgba(255,255,255,0.03); padding: 16px; border-radius: 10px; border: 1px solid var(--border);">
+          <div style="display: flex; justify-content: space-between; align-items: start; gap: 16px;">
+            <div style="flex: 1;">
+              <h3 style="margin-bottom: 6px; font-size: 16px; font-weight: 600;">
+                {{ post.title }}
+              </h3>
+              <div style="font-size: 13px; color: var(--text-muted);">
+                {% if post.status == 'published' %}
+                  <span style="color: var(--success);">✅ Published</span>
+                {% else %}
+                  <span style="color: var(--warning);">📋 Draft</span>
+                {% endif %}
+                • {{ post.updated_at|date:"M d, Y" }}
+                {% if post.author %}
+                  • by {{ post.author.username }}
+                {% endif %}
+              </div>
+            </div>
+            <a href="/panel/posts/{{ post.id }}/edit/" class="btn btn-secondary" style="font-size: 13px; padding: 8px 14px;">
+              Edit
+            </a>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p style="color: var(--text-muted); font-size: 14px;">No posts yet. Create your first post!</p>
+  {% endif %}
+  
+  {% if request.user.is_superuser %}
+  <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border);">
+    <h2 style="margin-bottom: 16px; font-size: 20px; font-weight: 600;">System Info</h2>
+    <div style="background: rgba(102, 126, 234, 0.05); padding: 16px; border-radius: 10px; border: 1px solid rgba(102, 126, 234, 0.2);">
+      <div style="font-size: 14px; color: var(--text-muted); margin-bottom: 8px;">
+        <strong>Role:</strong> 
+        {% if request.user.is_superuser %}
+          Superadmin (Full Access)
+        {% elif request.user.groups.filter(name='Editor').exists %}
+          Editor (Limited Access)
+        {% else %}
+          Staff
+        {% endif %}
+      </div>
+      <div style="font-size: 14px; color: var(--text-muted);">
+        <strong>Last Login:</strong> {{ request.user.last_login|date:"M d, Y H:i" }}
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
 {% endblock %}

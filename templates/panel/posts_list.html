@@ -2,42 +2,109 @@
 {% block title %}Posts{% endblock %}
 
 {% block content %}
-  <h2 style="margin-top:0;">Posts</h2>
+<div class="content-header">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 class="content-title">Posts</h1>
+      <p class="content-subtitle">Manage your blog posts and content</p>
+    </div>
+    <a href="/panel/posts/new/" class="btn btn-primary">
+      ➕ Create New Post
+    </a>
+  </div>
+</div>
 
-  <form method="get" style="margin: 12px 0; display:flex; gap:10px; flex-wrap:wrap;">
-    <input name="q" placeholder="Search title..." value="{{ q }}" style="padding:10px; width:260px; border-radius:10px; border:1px solid #ddd;">
-    <select name="status" style="padding:10px; border-radius:10px; border:1px solid #ddd;">
-      <option value="">All</option>
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="content-body">
+  <form method="get" style="margin-bottom: 24px; display:flex; gap:12px; flex-wrap:wrap;">
+    <input 
+      name="q" 
+      placeholder="Search by title..." 
+      value="{{ q }}" 
+      style="flex: 1; min-width: 250px;"
+    >
+    <select name="status" style="width: auto;">
+      <option value="">All Status</option>
       <option value="draft" {% if status == "draft" %}selected{% endif %}>Draft</option>
       <option value="published" {% if status == "published" %}selected{% endif %}>Published</option>
     </select>
-    <button style="padding:10px 14px; border-radius:10px; border:1px solid #ddd;">Filter</button>
-    <a href="/panel/posts/new/" style="align-self:center; margin-left:6px;">+ New Post</a>
+    <button type="submit" class="btn btn-secondary">🔍 Filter</button>
+    {% if q or status %}
+      <a href="/panel/posts/" class="btn btn-secondary">Clear</a>
+    {% endif %}
   </form>
 
-  <div style="overflow:auto; background:#fff; border-radius:12px; border:1px solid #e5e7eb;">
+  <div style="overflow-x: auto;">
     <table style="width:100%; border-collapse:collapse;">
-      <tr style="background:#f9fafb;">
-        <th style="text-align:left; padding:10px;">ID</th>
-        <th style="text-align:left; padding:10px;">Title</th>
-        <th style="text-align:left; padding:10px;">Status</th>
-        <th style="text-align:left; padding:10px;">Updated</th>
-        <th style="text-align:left; padding:10px;">Actions</th>
-      </tr>
-      {% for p in posts %}
-      <tr style="border-top:1px solid #eee;">
-        <td style="padding:10px;">{{ p.id }}</td>
-        <td style="padding:10px;">{{ p.title }}</td>
-        <td style="padding:10px;">{{ p.status }}</td>
-        <td style="padding:10px;">{{ p.updated_at }}</td>
-        <td style="padding:10px;">
-          <a href="/panel/posts/{{ p.id }}/edit/">Edit</a> |
-          <a href="/panel/posts/{{ p.id }}/delete/">Delete</a>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="5" style="padding:12px;">No posts</td></tr>
-      {% endfor %}
+      <thead>
+        <tr style="border-bottom: 2px solid var(--border);">
+          <th style="text-align:left; padding:12px 8px; font-size:13px; font-weight:600; color: var(--text-muted);">TITLE</th>
+          <th style="text-align:left; padding:12px 8px; font-size:13px; font-weight:600; color: var(--text-muted);">STATUS</th>
+          <th style="text-align:left; padding:12px 8px; font-size:13px; font-weight:600; color: var(--text-muted);">AUTHOR</th>
+          <th style="text-align:left; padding:12px 8px; font-size:13px; font-weight:600; color: var(--text-muted);">UPDATED</th>
+          <th style="text-align:center; padding:12px 8px; font-size:13px; font-weight:600; color: var(--text-muted);">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in posts %}
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding:16px 8px;">
+            <div style="font-weight:600; margin-bottom: 4px;">{{ p.title }}</div>
+            <div style="font-size: 12px; color: var(--text-muted);">{{ p.slug }}</div>
+          </td>
+          <td style="padding:16px 8px;">
+            {% if p.status == 'published' %}
+              <span style="background: rgba(16, 185, 129, 0.1); color: var(--success); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                ✅ Published
+              </span>
+            {% else %}
+              <span style="background: rgba(245, 158, 11, 0.1); color: var(--warning); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                📋 Draft
+              </span>
+            {% endif %}
+          </td>
+          <td style="padding:16px 8px; color: var(--text-muted); font-size: 14px;">
+            {% if p.author %}{{ p.author.username }}{% else %}—{% endif %}
+          </td>
+          <td style="padding:16px 8px; color: var(--text-muted); font-size: 14px;">
+            {{ p.updated_at|date:"M d, Y" }}
+          </td>
+          <td style="padding:16px 8px; text-align:center;">
+            <div style="display: flex; gap: 8px; justify-content: center;">
+              <a href="/posts/{{ p.slug }}/" target="_blank" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;" title="View">
+                👁️
+              </a>
+              <a href="/panel/posts/{{ p.id }}/edit/" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">
+                Edit
+              </a>
+              {% if can_delete %}
+              <a href="/panel/posts/{{ p.id }}/delete/" class="btn btn-danger" style="font-size: 12px; padding: 6px 12px;">
+                Delete
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="5" style="padding:32px; text-align:center; color: var(--text-muted);">
+            {% if q or status %}
+              No posts found matching your filters.
+            {% else %}
+              No posts yet. Create your first post!
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
   </div>
+</div>
 {% endblock %}

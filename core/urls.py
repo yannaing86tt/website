@@ -20,6 +20,7 @@ urlpatterns = [
     path("library/", views_media.media_list, name="media_list"),
     path("library/<str:kind>/", views_media.media_list, name="media_list_kind"),
     path("library/item/<slug:slug>/", views_media.media_detail, name="media_detail"),
+    
     # public
     path("", views.home, name="home"),
     path("posts/", views_public.posts_list, name="posts_list_public"),
@@ -32,6 +33,13 @@ urlpatterns = [
 
     path("panel/md-preview/", views_md.md_preview, name="md_preview"),
 
+    # User management (superadmin only)
+    path("panel/users/", views.user_list, name="user_list"),
+    path("panel/users/new/", views.user_create, name="user_create"),
+    path("panel/users/<int:user_id>/edit/", views.user_edit, name="user_edit"),
+    path("panel/users/<int:user_id>/delete/", views.user_delete, name="user_delete"),
+
+    # Posts
     path("panel/posts/", views_posts.post_list, name="post_list"),
     path("panel/posts/new/", views_posts.post_create, name="post_create"),
     path("panel/posts/<int:post_id>/edit/", views_posts.post_edit, name="post_edit"),

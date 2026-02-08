@@ -1,0 +1,95 @@
+{% extends "panel/base.html" %}
+
+{% block title %}User Management{% endblock %}
+
+{% block content %}
+<div class="content-header">
+  <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
+    <div>
+      <h1 class="content-title">User Management</h1>
+      <p class="content-subtitle">Manage admin users and their permissions</p>
+    </div>
+    <a href="/panel/users/new/" class="btn btn-primary">
+      ➕ Add New User
+    </a>
+  </div>
+</div>
+
+{% if messages %}
+  {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+      {{ message }}
+    </div>
+  {% endfor %}
+{% endif %}
+
+<div class="content-body">
+  <div style="overflow-x: auto;">
+    <table style="width: 100%; border-collapse: collapse;">
+      <thead>
+        <tr style="border-bottom: 2px solid var(--border);">
+          <th style="text-align: left; padding: 12px 8px; font-size: 13px; font-weight: 600; color: var(--text-muted);">USERNAME</th>
+          <th style="text-align: left; padding: 12px 8px; font-size: 13px; font-weight: 600; color: var(--text-muted);">EMAIL</th>
+          <th style="text-align: left; padding: 12px 8px; font-size: 13px; font-weight: 600; color: var(--text-muted);">ROLE</th>
+          <th style="text-align: left; padding: 12px 8px; font-size: 13px; font-weight: 600; color: var(--text-muted);">STATUS</th>
+          <th style="text-align: left; padding: 12px 8px; font-size: 13px; font-weight: 600; color: var(--text-muted);">LAST LOGIN</th>
+          <th style="text-align: center; padding: 12px 8px; font-size: 13px; font-weight: 600; color: var(--text-muted);">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for user in users %}
+        <tr style="border-bottom: 1px solid var(--border);">
+          <td style="padding: 16px 8px;">
+            <div style="font-weight: 600;">{{ user.username }}</div>
+          </td>
+          <td style="padding: 16px 8px; color: var(--text-muted); font-size: 14px;">
+            {{ user.email|default:"—" }}
+          </td>
+          <td style="padding: 16px 8px;">
+            {% if user.is_superuser %}
+              <span style="background: var(--accent-gradient); color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                Superadmin
+              </span>
+            {% elif user.groups.filter(name='Editor').exists %}
+              <span style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                Editor
+              </span>
+            {% else %}
+              <span style="background: rgba(255, 255, 255, 0.05); color: var(--text-muted); padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                Staff
+              </span>
+            {% endif %}
+          </td>
+          <td style="padding: 16px 8px;">
+            {% if user.is_active %}
+              <span style="color: var(--success); font-size: 14px;">● Active</span>
+            {% else %}
+              <span style="color: var(--text-muted); font-size: 14px;">● Inactive</span>
+            {% endif %}
+          </td>
+          <td style="padding: 16px 8px; color: var(--text-muted); font-size: 14px;">
+            {% if user.last_login %}
+              {{ user.last_login|date:"M d, Y" }}
+            {% else %}
+              Never
+            {% endif %}
+          </td>
+          <td style="padding: 16px 8px; text-align: center;">
+            <div style="display: flex; gap: 8px; justify-content: center;">
+              <a href="/panel/users/{{ user.id }}/edit/" class="btn btn-secondary" style="font-size: 12px; padding: 6px 12px;">
+                Edit
+              </a>
+              {% if not user.is_superuser or user.id != request.user.id %}
+              <a href="/panel/users/{{ user.id }}/delete/" class="btn btn-danger" style="font-size: 12px; padding: 6px 12px;">
+                Delete
+              </a>
+              {% endif %}
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
