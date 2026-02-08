@@ -1,245 +1,183 @@
-#!/usr/bin/env bash
-set -Eeuo pipefail
+#!/bin/bash
+set -e
 
-# ========= helpers =========
-die(){ echo "❌ $*" >&2; exit 1; }
-ok(){ echo "✅ $*"; }
-info(){ echo "ℹ️  $*"; }
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
 
-need_root(){
-  [[ "${EUID:-999}" -eq 0 ]] || die "Run as root: sudo -i"
-}
+echo -e "${GREEN}================================${NC}"
+echo -e "${GREEN}Django Website Installer${NC}"
+echo -e "${GREEN}================================${NC}"
+echo ""
 
-read_tty(){ # var prompt secret(0/1) default(optional)
-  local __var="$1" __msg="$2" __secret="${3:-0}" __def="${4:-}"
-  local val=""
-  if [[ "$__secret" == "1" ]]; then
-    read -r -s -p "$__msg: " val; echo
-  else
-    if [[ -n "$__def" ]]; then
-      read -r -p "$__msg [$__def]: " val
-      [[ -z "$val" ]] && val="$__def"
-    else
-      read -r -p "$__msg: " val
-    fi
-  fi
-  [[ -n "$val" ]] || die "Empty value for $__var"
-  printf -v "$__var" "%s" "$val"
-}
-
-valid_domain(){
-  local d="$1"
-  [[ "$d" =~ ^[A-Za-z0-9.-]+\.[A-Za-z]{2,}$ ]] || return 1
-  [[ "$d" != *".."* ]] || return 1
-  return 0
-}
-
-apt_install(){
-  export DEBIAN_FRONTEND=noninteractive
-  apt-get update -y
-  apt-get install -y "$@"
-}
-
-# ========= prompts =========
-need_root
-
-echo "=============================================="
-echo "  MySite One-Line Installer (Fresh VPS Deploy)"
-echo "  - Auto: Nginx + SSL + Gunicorn + Postgres"
-echo "  - NOTE: This deploys EMPTY DB (no old posts)."
-echo "=============================================="
-echo
-
-read_tty DOMAIN "New domain (e.g. example.com)"
-valid_domain "$DOMAIN" || die "Invalid domain: $DOMAIN"
-WWW_DOMAIN="www.${DOMAIN}"
-
-read_tty SITE_NAME "Site name (brand/title)" 0 "Knowledge Sharing Hub"
-
-read_tty ADMIN_USER "Admin username" 0 "admin"
-read_tty ADMIN_EMAIL "Admin email" 0 "admin@${DOMAIN}"
-read_tty ADMIN_PASS "Admin password" 1
-
-read_tty DB_NAME "PostgreSQL DB name" 0 "mysite"
-read_tty DB_USER "PostgreSQL DB user" 0 "mysiteuser"
-read_tty DB_PASS "PostgreSQL DB password" 1
-
-# repo settings (change defaults to your repo)
-read_tty REPO_URL "GitHub repo URL" 0 "https://github.com/yannaing86tt/new_website.git"
-read_tty REPO_BRANCH "Repo branch" 0 "main"
-
-APP_DIR="/opt/mysite"
-SERVICE_NAME="mysite"
-GUNICORN_BIND="127.0.0.1:8001"
-
-# ========= system deps =========
-info "Installing packages..."
-apt_install python3-venv python3-pip nginx postgresql postgresql-contrib certbot python3-certbot-nginx git ufw
-
-# ========= firewall =========
-info "Configuring UFW..."
-ufw allow OpenSSH >/dev/null 2>&1 || true
-ufw allow 80/tcp >/dev/null 2>&1 || true
-ufw allow 443/tcp >/dev/null 2>&1 || true
-ufw --force enable >/dev/null 2>&1 || true
-
-# ========= code deploy =========
-info "Deploying code to ${APP_DIR}..."
-if [[ -d "${APP_DIR}/.git" ]]; then
-  info "Repo exists. Pulling latest..."
-  cd "$APP_DIR"
-  git fetch --all
-  git checkout "$REPO_BRANCH"
-  git pull --ff-only origin "$REPO_BRANCH"
-else
-  rm -rf "$APP_DIR"
-  git clone -b "$REPO_BRANCH" "$REPO_URL" "$APP_DIR"
+# Check if running as root
+if [[ $EUID -ne 0 ]]; then
+   echo -e "${RED}This script must be run as root${NC}"
+   exit 1
 fi
 
-[[ -f "${APP_DIR}/manage.py" ]] || die "manage.py not found in ${APP_DIR}. Check repo root."
+# Update system
+echo -e "${YELLOW}[1/12] Updating system...${NC}"
+apt-get update -qq
 
-# ========= python venv =========
-info "Setting up venv..."
-python3 -m venv "${APP_DIR}/.venv"
-source "${APP_DIR}/.venv/bin/activate"
-pip install -U pip wheel
-if [[ -f "${APP_DIR}/requirements.txt" ]]; then
-  pip install -r "${APP_DIR}/requirements.txt"
-else
-  die "requirements.txt not found. Add it to repo."
+# Install dependencies
+echo -e "${YELLOW}[2/12] Installing dependencies...${NC}"
+apt-get install -y -qq python3 python3-pip python3-venv nginx git curl certbot python3-certbot-nginx
+
+# Collect information
+echo ""
+echo -e "${GREEN}Please provide the following information:${NC}"
+echo ""
+
+read -p "Domain name (e.g., example.com): " DOMAIN
+read -p "Website name: " SITE_NAME
+read -p "Admin username: " ADMIN_USER
+read -sp "Admin password: " ADMIN_PASS
+echo ""
+read -p "Admin email: " ADMIN_EMAIL
+
+# Generate secret key
+SECRET_KEY=$(python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
+
+# Set installation directory
+INSTALL_DIR="/opt/mysite"
+REPO_URL="https://github.com/yannaing86tt/website.git"
+
+# Clone repository
+echo -e "${YELLOW}[3/12] Cloning repository...${NC}"
+if [ -d "$INSTALL_DIR" ]; then
+    rm -rf "$INSTALL_DIR"
 fi
+git clone "$REPO_URL" "$INSTALL_DIR"
+cd "$INSTALL_DIR"
 
-# ========= env file =========
-info "Writing .env..."
-SECRET_KEY="$(python3 - <<'PY'
-import secrets
-print(secrets.token_urlsafe(48))
-PY
-)"
+# Create virtual environment
+echo -e "${YELLOW}[4/12] Creating virtual environment...${NC}"
+python3 -m venv .venv
+source .venv/bin/activate
 
+# Install Python dependencies
+echo -e "${YELLOW}[5/12] Installing Python packages...${NC}"
+pip install --upgrade pip -q
+pip install -r requirements.txt -q
 
-cat > "${APP_DIR}/.env" <<EOF
+# Create .env file
+echo -e "${YELLOW}[6/12] Configuring environment...${NC}"
+cat > .env << ENVFILE
+DJANGO_SECRET_KEY=$SECRET_KEY
 DJANGO_DEBUG=0
-DJANGO_SECRET_KEY=${SECRET_KEY}
+DJANGO_ALLOWED_HOSTS=$DOMAIN,www.$DOMAIN
+SITE_NAME=$SITE_NAME
+SITE_URL=https://$DOMAIN
+ENVFILE
 
-DJANGO_ALLOWED_HOSTS=${DOMAIN},${WWW_DOMAIN}
-DJANGO_CSRF_TRUSTED_ORIGINS=https://${DOMAIN},https://${WWW_DOMAIN}
+# Create media directories
+echo -e "${YELLOW}[7/12] Creating media directories...${NC}"
+mkdir -p media/covers media/library media/library_covers media/library_tracks
+chown -R www-data:www-data media
+chmod -R 755 media
 
-DB_NAME=${DB_NAME}
-DB_USER=${DB_USER}
-DB_PASS=${DB_PASS}
-DB_HOST=127.0.0.1
-DB_PORT=5432
+# Run migrations
+echo -e "${YELLOW}[8/12] Running database migrations...${NC}"
+python3 manage.py migrate --noinput
 
-SITE_NAME=${SITE_NAME}
-EOF
-chmod 600 "${APP_DIR}/.env"
+# Create superuser
+echo -e "${YELLOW}[9/12] Creating admin user...${NC}"
+python3 manage.py shell << PYEOF
+from django.contrib.auth import get_user_model
+User = get_user_model()
+if not User.objects.filter(username='$ADMIN_USER').exists():
+    User.objects.create_superuser('$ADMIN_USER', '$ADMIN_EMAIL', '$ADMIN_PASS')
+PYEOF
 
-# ========= postgres (empty db) =========
-info "Configuring PostgreSQL (empty DB)..."
-sudo -u postgres psql <<SQL
-DO \$\$
-BEGIN
-  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='${DB_USER}') THEN
-    CREATE USER ${DB_USER} WITH PASSWORD '${DB_PASS}';
-  ELSE
-    ALTER USER ${DB_USER} WITH PASSWORD '${DB_PASS}';
-  END IF;
-END
-\$\$;
+# Collect static files
+python3 manage.py collectstatic --noinput
 
-DO \$\$
-BEGIN
-  IF NOT EXISTS (SELECT FROM pg_database WHERE datname='${DB_NAME}') THEN
-    CREATE DATABASE ${DB_NAME} OWNER ${DB_USER};
-  END IF;
-END
-\$\$;
-
-GRANT ALL PRIVILEGES ON DATABASE ${DB_NAME} TO ${DB_USER};
-SQL
-
-# ========= django migrate + superuser =========
-info "Running migrations..."
-cd "$APP_DIR"
-
-export DJANGO_SETTINGS_MODULE="config.settings"
-export DJANGO_SUPERUSER_USERNAME="$ADMIN_USER"
-export DJANGO_SUPERUSER_EMAIL="$ADMIN_EMAIL"
-export DJANGO_SUPERUSER_PASSWORD="$ADMIN_PASS"
-
-python manage.py migrate
-
-# createsuperuser non-interactive (skip if exists)
-python manage.py createsuperuser --noinput || true
-
-info "Collecting static..."
-python manage.py collectstatic --noinput
-
-# ========= systemd gunicorn =========
-info "Creating systemd service..."
-cat > "/etc/systemd/system/${SERVICE_NAME}.service" <<SERVICE
+# Create Gunicorn service
+echo -e "${YELLOW}[10/12] Setting up Gunicorn service...${NC}"
+cat > /etc/systemd/system/mysite.service << SERVICEEOF
 [Unit]
-Description=${SERVICE_NAME} gunicorn
+Description=mysite gunicorn
 After=network.target
 
 [Service]
 User=www-data
 Group=www-data
-WorkingDirectory=${APP_DIR}
+WorkingDirectory=$INSTALL_DIR
 Environment="DJANGO_SETTINGS_MODULE=config.settings"
-ExecStart=${APP_DIR}/.venv/bin/gunicorn config.wsgi:application --bind ${GUNICORN_BIND} --workers 2 --timeout 60
+
+ExecStart=$INSTALL_DIR/.venv/bin/gunicorn \\
+  --chdir $INSTALL_DIR \\
+  config.wsgi:application \\
+  --bind 127.0.0.1:8001 \\
+  --workers 2 \\
+  --timeout 300
+
 Restart=always
 
 [Install]
 WantedBy=multi-user.target
-SERVICE
+SERVICEEOF
 
 systemctl daemon-reload
-systemctl enable --now "${SERVICE_NAME}"
+systemctl enable mysite.service
+systemctl start mysite.service
 
-# ========= nginx =========
-info "Configuring Nginx..."
-rm -f /etc/nginx/sites-enabled/default || true
-
-cat > "/etc/nginx/sites-available/${SERVICE_NAME}" <<NGINX
+# Configure Nginx
+echo -e "${YELLOW}[11/12] Configuring Nginx...${NC}"
+cat > /etc/nginx/sites-available/mysite << NGINXEOF
 server {
-    listen 80;
-    server_name ${DOMAIN} ${WWW_DOMAIN};
+    server_name $DOMAIN www.$DOMAIN;
 
     location /static/ {
-        alias ${APP_DIR}/staticfiles/;
+        alias $INSTALL_DIR/staticfiles/;
+        access_log off;
+        expires 30d;
     }
 
     location /media/ {
-        alias ${APP_DIR}/media/;
+        alias $INSTALL_DIR/media/;
     }
 
     location / {
-        proxy_pass http://${GUNICORN_BIND};
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_pass http://127.0.0.1:8001;
+        proxy_set_header Host \\\$host;
+        proxy_set_header X-Real-IP \\\$remote_addr;
+        proxy_set_header X-Forwarded-For \\\$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \\\$scheme;
+        proxy_read_timeout 300;
+        proxy_connect_timeout 300;
+        proxy_send_timeout 300;
     }
-}
-NGINX
 
-ln -sf "/etc/nginx/sites-available/${SERVICE_NAME}" "/etc/nginx/sites-enabled/${SERVICE_NAME}"
+    listen 80;
+}
+NGINXEOF
+
+# Upload limits
+cat > /etc/nginx/conf.d/upload_limit.conf << UPLOADEOF
+client_max_body_size 700M;
+UPLOADEOF
+
+ln -sf /etc/nginx/sites-available/mysite /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
 nginx -t
 systemctl reload nginx
 
-# ========= SSL =========
-info "Issuing SSL (Let's Encrypt)..."
-certbot --nginx -d "${DOMAIN}" -d "${WWW_DOMAIN}" --non-interactive --agree-tos -m "${ADMIN_EMAIL}" --redirect || die "Certbot failed. Check DNS A record & port 80 open."
+# Setup SSL
+echo -e "${YELLOW}[12/12] Setting up SSL certificate...${NC}"
+certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos --email $ADMIN_EMAIL --redirect
 
-# ========= done =========
-echo
-ok "Deployed successfully!"
-echo "➡️  Site: https://${DOMAIN}"
-echo "➡️  Admin panel: https://${DOMAIN}/panel/"
-echo "➡️  Admin user: ${ADMIN_USER}"
-echo
-info "Service status:"
-systemctl status "${SERVICE_NAME}" --no-pager || true
-
+echo ""
+echo -e "${GREEN}================================${NC}"
+echo -e "${GREEN}Installation Complete!${NC}"
+echo -e "${GREEN}================================${NC}"
+echo ""
+echo -e "Website: ${GREEN}https://$DOMAIN${NC}"
+echo -e "Admin Panel: ${GREEN}https://$DOMAIN/admin${NC}"
+echo -e "Username: ${GREEN}$ADMIN_USER${NC}"
+echo ""
+echo -e "${YELLOW}Important: Save your credentials in a safe place!${NC}"
+echo ""

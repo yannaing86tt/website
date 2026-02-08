@@ -1,57 +1,98 @@
-# New Website (Django) – One-Line VPS Installer
+# Django Website - One-Click Installer
 
-ဒီ project က **Django-based website + admin panel** ကို  
-**VPS အသစ် + domain အသစ်** မှာ **one-line installer script** နဲ့ အလွယ်တကူ deploy လုပ်နိုင်အောင် ပြုလုပ်ထားပါတယ်။
+Automated installation script for deploying a Django-based website with Nginx, Gunicorn, and SSL.
 
-👉 အဟောင်း website ထဲက **posts / media / database contents မပါဘဲ**  
-👉 **code + UI + panel structure** ပဲ clean install လုပ်ပေးပါတယ်
+## Features
 
----
+- ✅ Automated system setup
+- ✅ Python 3 + Virtual environment
+- ✅ Django + Gunicorn
+- ✅ Nginx reverse proxy
+- ✅ SSL certificate (Let's Encrypt)
+- ✅ Media file handling (up to 700 MB)
+- ✅ Database migrations
+- ✅ Admin user creation
 
-## ✨ Features
+## Requirements
 
-- Django website (public pages + admin panel)
-- PostgreSQL database (empty DB – no old posts)
-- Nginx + Gunicorn
-- Let’s Encrypt SSL (HTTPS auto)
-- `.env` based configuration
-- One-line installer (interactive prompts)
-- Mobile friendly UI + custom admin panel
-- Media upload support (mp3 multi-upload ready)
+- Fresh Ubuntu 22.04/20.04 or Debian 11/12 VPS
+- Root access
+- Domain name pointed to your server IP (A record)
 
----
+## Quick Install
 
-## 📦 What this installer does
-
-Installer script က run လိုက်တာနဲ့ အောက်ပါအလုပ်တွေကို **အလိုအလျောက်** လုပ်ပေးပါတယ်—
-
-- VPS system packages install
-- GitHub repo clone
-- Python venv setup + requirements install
-- `.env` auto generate
-- PostgreSQL DB + user create (empty DB)
-- Django migrate + superuser create
-- collectstatic
-- Gunicorn systemd service
-- Nginx config
-- Let’s Encrypt SSL (HTTPS)
-- Firewall (UFW) basic rules
-
----
-
-## 🖥 Requirements
-
-- **Fresh VPS** (Ubuntu 22.04 / 24.04 recommended)
-- **Root access**
-- **Domain name** (DNS A record → VPS IP)
-- Ports **80 / 443** open
-
----
-
-## 🚀 One-Line Installation
-
-VPS အသစ်ထဲမှာ ဒီ command ကိုပဲ run လုပ်ပါ👇
+Run this command as root:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/yannaing86tt/new_website/main/install.sh | sudo bash
+curl -sSL https://raw.githubusercontent.com/yannaing86tt/website/main/install.sh | bash
 ```
+
+Or with wget:
+
+```bash
+wget -qO- https://raw.githubusercontent.com/yannaing86tt/website/main/install.sh | bash
+```
+
+## Installation Prompts
+
+The script will ask you for:
+
+1. **Domain name** (e.g., example.com)
+2. **Website name** (displayed on site)
+3. **Admin username**
+4. **Admin password**
+5. **Admin email**
+
+## What Gets Installed
+
+- Python 3 + pip + venv
+- Nginx web server
+- Certbot (SSL certificates)
+- All Python dependencies from `requirements.txt`
+- Gunicorn WSGI server
+- Database (SQLite by default)
+
+## Post-Installation
+
+After installation completes:
+
+1. Visit `https://yourdomain.com` to see your website
+2. Access admin panel at `https://yourdomain.com/admin`
+3. Login with the credentials you provided
+
+## File Locations
+
+- **Website code:** `/opt/mysite`
+- **Media files:** `/opt/mysite/media`
+- **Static files:** `/opt/mysite/staticfiles`
+- **Logs:** `journalctl -u mysite.service`
+
+## Managing the Site
+
+### Restart website
+```bash
+systemctl restart mysite.service
+```
+
+### View logs
+```bash
+journalctl -u mysite.service -f
+```
+
+### Reload Nginx
+```bash
+systemctl reload nginx
+```
+
+## Upload Limits
+
+- **Max file size:** 700 MB
+- **Timeout:** 5 minutes per upload
+
+## Support
+
+For issues or questions, contact the repository maintainer.
+
+## License
+
+MIT License
