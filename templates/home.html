@@ -1,0 +1,273 @@
+{% extends "public_base.html" %}
+{% block title %}Home - YNL Tech{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Hero Section with Gradient */
+  .hero-modern {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
+    padding: 60px 20px;
+    border-radius: 16px;
+    margin: 20px 0 30px;
+    text-align: center;
+  }
+  
+  .hero-modern h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin: 0 0 16px;
+    line-height: 1.2;
+  }
+  
+  .gradient-text {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .hero-modern p {
+    font-size: 1.15rem;
+    color: var(--text-secondary);
+    margin: 0 0 24px;
+  }
+  
+  .hero-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .btn-modern {
+    padding: 12px 28px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+  }
+  
+  .btn-primary-modern {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  }
+  
+  .btn-primary-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  }
+  
+  /* Stats Section */
+  .stats-modern {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 30px 20px;
+    margin: 20px 0;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+  }
+  
+  .stat-item {
+    text-align: center;
+  }
+  
+  .stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .stat-label {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-top: 4px;
+  }
+  
+  /* Enhanced Post Grid */
+  .grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-top: 24px;
+  }
+  
+  .card-modern {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  
+  .card-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    border-color: #667eea;
+  }
+  
+  .card-modern .thumb {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+  }
+  
+  .card-modern .thumb-ph {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 3rem;
+  }
+  
+  .card-modern .thumb-ph::before {
+    content: '📄';
+  }
+  
+  .card-body-modern {
+    padding: 20px;
+  }
+  
+  .post-meta-modern {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  
+  .post-tag-modern {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  
+  .card-modern .title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin: 0 0 10px;
+    color: var(--text);
+  }
+  
+  .card-modern .excerpt {
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin: 40px 0 20px;
+  }
+  
+  .section-header h2 {
+    font-size: 1.8rem;
+    margin: 0;
+    position: relative;
+  }
+  
+  .section-header h2::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin-top: 8px;
+    border-radius: 2px;
+  }
+  
+  @media (max-width: 768px) {
+    .hero-modern h1 {
+      font-size: 2rem;
+    }
+    
+    .stats-modern {
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .grid-modern {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+  <!-- Hero Section -->
+  <section class="hero-modern">
+    <h1>
+      <span class="gradient-text">နည်းပညာ</span> ခရီးစဉ်
+    </h1>
+    <p>VPS, Cloud Computing, DevOps နှင့် Web Development အကြောင်းအရာများကို လေ့လာပါ</p>
+    <div class="hero-buttons">
+      <a class="btn-modern btn-primary-modern" href="/posts/">Posts များကြည့်ရန် →</a>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <div class="stats-modern">
+    <div class="stat-item">
+      <div class="stat-number">{{ total_posts|default:"50+" }}</div>
+      <div class="stat-label">Articles</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">10K+</div>
+      <div class="stat-label">Readers</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-number">100%</div>
+      <div class="stat-label">Free Content</div>
+    </div>
+  </div>
+
+  <!-- Posts Section -->
+  <section>
+    <div class="section-header">
+      <h2>လတ်တလော Posts များ</h2>
+      <a href="/posts/">View all →</a>
+    </div>
+
+    <div class="grid-modern">
+      {% for p in posts %}
+        <a href="/posts/{{ p.slug }}/" class="card-modern">
+          {% if p.cover_image %}
+            <img class="thumb" src="{{ p.cover_image.url }}" alt="{{ p.title }}">
+          {% else %}
+            <div class="thumb thumb-ph"></div>
+          {% endif %}
+
+          <div class="card-body-modern">
+            <div class="post-meta-modern">
+              <span class="post-tag-modern">Tutorial</span>
+              <span>{{ p.published_at|default:p.created_at|date:"M d, Y" }}</span>
+            </div>
+            <div class="title">{{ p.title }}</div>
+            <div class="excerpt">
+              {% if p.content %}{{ p.content|striptags|truncatechars:120 }}{% else %}…{% endif %}
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="card" style="padding:20px; text-align:center;">
+          <p>No published posts yet.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "public_base.html" %}
+{% block title %}Posts{% endblock %}
+
+{% block content %}
+  <h2 style="margin-top:0;">Posts</h2>
+
+  <div class="grid">
+    {% for p in posts %}
+      <a href="/posts/{{ p.slug }}/" style="color:inherit;">
+        <div class="card">
+          {% if p.cover_image %}
+            <img class="thumb" src="{{ p.cover_image.url }}" alt="">
+          {% else %}
+            <div class="thumb thumb-ph"></div>
+          {% endif %}
+
+          <div class="card-body">
+            <div class="meta">{{ p.published_at|default:p.created_at }}</div>
+            <div class="title">{{ p.title }}</div>
+            <div class="excerpt">
+              {% if p.content %}{{ p.content|truncatechars:140 }}{% else %}…{% endif %}
+            </div>
+          </div>
+        </div>
+      </a>
+    {% empty %}
+      <div class="card" style="padding:14px;">No published posts yet.</div>
+    {% endfor %}
+  </div>
+{% endblock %}

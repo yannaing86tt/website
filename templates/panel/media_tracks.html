@@ -1,0 +1,63 @@
+{% extends "panel/base.html" %}
+{% block content %}
+
+<h1 style="margin-bottom:10px;">Tracks • {{ item.title }}</h1>
+<p style="opacity:.8; margin-top:0;">
+  Public: <a href="/library/item/{{ item.slug }}/" target="_blank" rel="noopener">View</a>
+</p>
+
+<div class="card" style="padding:16px; margin:14px 0;">
+  <h3 style="margin-top:0;">Add Track</h3>
+
+  <form method="post" enctype="multipart/form-data" style="display:grid; gap:10px; max-width:720px;">
+    {% csrf_token %}
+
+    <label>
+      Title
+      <input name="title" type="text" style="width:100%; padding:10px; border-radius:10px;">
+    </label>
+
+    <label>
+      Order (optional)
+      <input name="order" type="number" min="1" style="width:220px; padding:10px; border-radius:10px;">
+    </label>
+
+    <label>
+      MP3 File
+      <input name="audio_file" type="file" accept="audio/*" required>
+    </label>
+
+    <button class="btn" type="submit">Save Track</button>
+  </form>
+</div>
+
+<div class="card" style="padding:16px;">
+  <h3 style="margin-top:0;">Track List ({{ tracks|length }})</h3>
+
+  {% if tracks %}
+    <ol style="display:grid; gap:12px; padding-left: 18px;">
+      {% for t in tracks %}
+        <li style="padding:12px; border:1px solid rgba(255,255,255,.08); border-radius:12px;">
+          <div style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
+            <div>
+              <strong>{{ t.order }}.</strong> {{ t.title }}
+            </div>
+
+            <form method="post" action="{% url 'panel_media_track_delete' pk=t.pk %}" style="margin:0;">
+              {% csrf_token %}
+              <button type="submit" class="btn" style="opacity:.9;">Delete</button>
+            </form>
+          </div>
+
+          <audio controls preload="none" style="width:100%; margin-top:8px;">
+            <source src="{{ t.audio_file.url }}" type="audio/mpeg">
+          </audio>
+        </li>
+      {% endfor %}
+    </ol>
+  {% else %}
+    <div style="opacity:.75;">No tracks yet.</div>
+  {% endif %}
+</div>
+
+{% endblock %}

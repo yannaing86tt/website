@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="my">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Myanmar:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <title>{% block title %}YNL Tech - Knowledge Sharing Hub{% endblock %}</title>
+
+  <link rel="stylesheet" href="/static/public.css?v=1768732013">
+  <link rel="stylesheet" href="/static/codehilite.css">
+  <script src="/static/copycode.js"></script>
+  <link rel="stylesheet" href="/static/markdown_extra.css">
+  
+  <style>
+    :root {
+      --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    /* Enhanced Header */
+    .header {
+      background: var(--bg-card);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 16px;
+    }
+    
+    .brand {
+      font-weight: 900;
+      letter-spacing: .2px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .brand::before {
+      content: '💻';
+      font-size: 1.5rem;
+    }
+    
+    .nav {
+      display: flex;
+      gap: 12px;
+      margin-left: auto;
+    }
+    
+    .nav a {
+      position: relative;
+      transition: all 0.3s ease;
+      color: var(--text);
+    }
+    
+    .nav a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent-gradient);
+    }
+    
+    /* Mobile menu button */
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+    }
+    
+    .menu-toggle:hover {
+      background: rgba(255,255,255,.06);
+    }
+    
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      .menu-toggle {
+        display: block;
+        margin-left: auto;
+      }
+      
+      .nav {
+        position: fixed;
+        top: 67px;
+        right: -100%;
+        background: rgba(10,16,32,.95);
+        backdrop-filter: blur(10px);
+        border-left: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        border-radius: 0 0 0 18px;
+        padding: 16px;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 200px;
+        transition: right 0.3s ease;
+        box-shadow: -4px 4px 20px rgba(0,0,0,.3);
+      }
+      
+      .nav.active {
+        right: 0;
+      }
+      
+      .nav a {
+        display: block;
+        padding: 12px 16px;
+      }
+    }
+    
+    /* Enhanced Footer */
+    .footer {
+      margin-top: 60px;
+      padding: 40px 0 20px;
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+    }
+    
+    .footer a:hover {
+      color: #667eea;
+    }
+  </style>
+  
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <header class="header">
+    <div class="header-inner container">
+      <a class="brand" href="/">YNL Tech</a>
+
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+      <nav class="nav" id="mainNav">
+        <a href="/" onclick="closeMenu()" class="{% if request.path == '/' %}active{% endif %}">Home</a>
+        <a href="/posts/" onclick="closeMenu()" class="{% if '/posts/' in request.path %}active{% endif %}">Tech</a>
+        <a href="/library/" onclick="closeMenu()" class="{% if '/library/' in request.path %}active{% endif %}">Media</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+    <div class="container" style="font-size:13px; color: rgba(232,238,252,.65); padding-top:14px; padding-bottom:14px;">
+      © YanNaingLin
+      <span style="opacity:.55;"> | </span>
+      <a href="https://t.me/knowledgeshareinghub" target="_blank" rel="noopener">Telegram Channel</a>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile Menu Toggle
+    function toggleMenu() {
+      const nav = document.getElementById("mainNav");
+      nav.classList.toggle("active");
+    }
+    
+    function closeMenu() {
+      const nav = document.getElementById("mainNav");
+      nav.classList.remove("active");
+    }
+    
+    // Close menu when clicking outside
+    document.addEventListener("click", function(event) {
+      const nav = document.getElementById("mainNav");
+      const toggle = document.querySelector(".menu-toggle");
+      if (nav && toggle && !nav.contains(event.target) && !toggle.contains(event.target)) {
+        nav.classList.remove("active");
+      }
+    });
+  </script>
+  
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

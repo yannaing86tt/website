@@ -1,0 +1,26 @@
+{% extends "public_base.html" %}
+{% block title %}Media{% endblock %}
+{% block content %}
+  <h2 style="margin-top:0;">Media{% if kind %} — {{ kind }}{% endif %}</h2>
+
+  <div class="grid">
+    {% for it in items %}
+      <a href="/library/item/{{ it.slug }}/" style="color:inherit;">
+        <div class="card">
+          {% if it.cover_image %}
+            <img class="thumb" src="{{ it.cover_image.url }}" alt="">
+          {% else %}
+            <div class="thumb thumb-ph"></div>
+          {% endif %}
+          <div class="card-body">
+            <div class="meta">{{ it.published_at|default:it.created_at }}</div>
+            <div class="title">{{ it.title }}</div>
+            <div class="excerpt">{{ it.description|default:""|truncatechars:140 }}</div>
+          </div>
+        </div>
+      </a>
+    {% empty %}
+      <div class="card" style="padding:14px;">No media yet.</div>
+    {% endfor %}
+  </div>
+{% endblock %}

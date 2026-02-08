@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Panel Login</title>
+</head>
+<body style="font-family: system-ui; padding: 24px; max-width: 420px; margin: auto;">
+  <h2>Admin Panel Login</h2>
+
+  {% if error %}
+    <div style="padding:10px; background:#ffecec; border:1px solid #ffb3b3; margin:12px 0;">
+      {{ error }}
+    </div>
+  {% endif %}
+
+  <form method="post" action="/panel/login/">
+  {% csrf_token %}
+  <input type="text" name="username" required>
+  <input type="password" name="password" required>
+  <button type="submit">Login</button>
+</form>
+
+    <div style="margin: 10px 0;">
+      <label>Password</label><br>
+      <input name="password" type="password" style="width:100%; padding:10px;">
+    </div>
+    <button style="padding:10px 14px;">Login</button>
+  </form>
+</body>
+</html>

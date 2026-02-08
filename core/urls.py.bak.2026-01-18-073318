@@ -1,0 +1,25 @@
+from django.urls import path
+from . import views
+from . import views_posts
+from . import views_public
+from . import views_media
+from . import views_md
+
+urlpatterns = [
+    # public
+    path("", views.home, name="home"),
+    path("posts/", views_public.posts_list, name="posts_list_public"),
+    path("posts/<str:slug>/", views_public.post_detail, name="post_detail"),
+
+    # panel
+    path("panel/", views.panel_dashboard, name="panel_dashboard"),
+    path("panel/login/", views.panel_login, name="panel_login"),
+    path("panel/logout/", views.panel_logout, name="panel_logout"),
+
+    path("panel/md-preview/", views_md.md_preview, name="md_preview"),
+
+    path("panel/posts/", views_posts.post_list, name="post_list"),
+    path("panel/posts/new/", views_posts.post_create, name="post_create"),
+    path("panel/posts/<int:post_id>/edit/", views_posts.post_edit, name="post_edit"),
+    path("panel/posts/<int:post_id>/delete/", views_posts.post_delete, name="post_delete"),
+]

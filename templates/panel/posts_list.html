@@ -1,0 +1,43 @@
+{% extends "panel/base.html" %}
+{% block title %}Posts{% endblock %}
+
+{% block content %}
+  <h2 style="margin-top:0;">Posts</h2>
+
+  <form method="get" style="margin: 12px 0; display:flex; gap:10px; flex-wrap:wrap;">
+    <input name="q" placeholder="Search title..." value="{{ q }}" style="padding:10px; width:260px; border-radius:10px; border:1px solid #ddd;">
+    <select name="status" style="padding:10px; border-radius:10px; border:1px solid #ddd;">
+      <option value="">All</option>
+      <option value="draft" {% if status == "draft" %}selected{% endif %}>Draft</option>
+      <option value="published" {% if status == "published" %}selected{% endif %}>Published</option>
+    </select>
+    <button style="padding:10px 14px; border-radius:10px; border:1px solid #ddd;">Filter</button>
+    <a href="/panel/posts/new/" style="align-self:center; margin-left:6px;">+ New Post</a>
+  </form>
+
+  <div style="overflow:auto; background:#fff; border-radius:12px; border:1px solid #e5e7eb;">
+    <table style="width:100%; border-collapse:collapse;">
+      <tr style="background:#f9fafb;">
+        <th style="text-align:left; padding:10px;">ID</th>
+        <th style="text-align:left; padding:10px;">Title</th>
+        <th style="text-align:left; padding:10px;">Status</th>
+        <th style="text-align:left; padding:10px;">Updated</th>
+        <th style="text-align:left; padding:10px;">Actions</th>
+      </tr>
+      {% for p in posts %}
+      <tr style="border-top:1px solid #eee;">
+        <td style="padding:10px;">{{ p.id }}</td>
+        <td style="padding:10px;">{{ p.title }}</td>
+        <td style="padding:10px;">{{ p.status }}</td>
+        <td style="padding:10px;">{{ p.updated_at }}</td>
+        <td style="padding:10px;">
+          <a href="/panel/posts/{{ p.id }}/edit/">Edit</a> |
+          <a href="/panel/posts/{{ p.id }}/delete/">Delete</a>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5" style="padding:12px;">No posts</td></tr>
+      {% endfor %}
+    </table>
+  </div>
+{% endblock %}

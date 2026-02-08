@@ -1,0 +1,23 @@
+{% extends "public_base.html" %}
+{% block title %}{{ post.title }} - ynltestvpn{% endblock %}
+
+{% block content %}
+  <p style="margin-top:0;"><a href="/posts/">← Back</a></p>
+
+  <div class="card" style="padding:14px;">
+    <h1 style="margin: 6px 0 10px; font-size: 26px;">{{ post.title }}</h1>
+
+    {% if post.cover_image %}
+      <img src="{{ post.cover_image.url }}"
+           style="width:100%; height:auto; border-radius: 14px; margin: 10px 0 14px;">
+    {% endif %}
+
+    <article id="postBody" class="article">
+      {{ content_html|safe }}
+    </article>
+  </div>
+
+  <script>
+    window.decorateCodeBlocks(document.getElementById("postBody"));
+  </script>
+{% endblock %}

@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{% block title %}Panel{% endblock %}</title>
+  <link rel="stylesheet" href="/static/codehilite.css">
+  <script src="/static/copycode.js"></script>
+  <link rel="stylesheet" href="/static/markdown_extra.css">
+</head>
+<body style="margin:0; font-family: system-ui;">
+  <div style="display:flex; min-height:100vh;">
+
+    <aside style="width:240px; background:#111827; color:#fff; padding:18px;">
+      <div style="font-weight:700; font-size:18px; margin-bottom:14px;">YNL Panel</div>
+
+      <div style="opacity:.8; font-size:13px; margin-bottom:14px;">
+        {{ request.user.username }}
+      </div>
+
+      <nav style="display:flex; flex-direction:column; gap:10px;">
+        <a href="/panel/" style="color:#fff; text-decoration:none;">Dashboard</a>
+        <a href="/panel/posts/" style="color:#fff; text-decoration:none;">Posts</a>
+        <a href="/panel/media/">Media</a>
+        <a href="/panel/logout/" style="color:#fff; text-decoration:none; opacity:.8;">Logout</a>
+      </nav>
+    </aside>
+
+    <main style="flex:1; background:#f3f4f6; padding:22px;">
+      <div style="background:#fff; padding:16px 18px; border-radius:12px;">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,54 @@
+{% extends "panel/base.html" %}
+{% block content %}
+<h1>{% if mode == "edit" %}Edit Media{% else %}New Media{% endif %}</h1>
+
+<form method="post" enctype="multipart/form-data" style="max-width:760px;">
+  {% csrf_token %}
+  {{ form.non_field_errors }}
+
+  <p>
+    <label>Title</label><br>
+    {{ form.title }}
+  </p>
+
+  <p>
+    <label>Slug (optional)</label><br>
+    {{ form.slug }}
+    <div style="opacity:.7; font-size:12px;">မထည့်ရင် auto-generate လုပ်မယ်</div>
+  </p>
+
+  <p>
+    <label>Type</label><br>
+    {{ form.kind }}
+  </p>
+
+  <p>
+    <label>Status</label><br>
+    {{ form.status }}
+  </p>
+
+  <p>
+    <label>Video URL (YouTube/Vimeo) — video only</label><br>
+    {{ form.video_url }}
+  </p>
+
+  <p>
+    <label>File (MP3/MP4)</label><br>
+    {{ form.file }}
+    <div style="opacity:.7; font-size:12px;">MP3 တင်ချင်ရင် ဒီမှာတင်၊ Video ကို URL မသုံးဘဲ MP4 တင်ချင်ရင် ဒီမှာတင်</div>
+  </p>
+
+  <p>
+    <label>Cover Image (optional)</label><br>
+    {{ form.cover_image }}
+  </p>
+
+  <p>
+    <label>Description</label><br>
+    {{ form.description }}
+  </p>
+
+  <button type="submit">Save</button>
+  <a href="/panel/media/" style="margin-left:10px;">Cancel</a>
+</form>
+{% endblock %}

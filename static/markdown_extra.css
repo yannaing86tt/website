@@ -1,0 +1,61 @@
+/* works on public(dark) + panel(light) with fallbacks */
+.admonition{
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--panel, #f6f7fb);
+  color: var(--text, #111);
+  border-left: 6px solid #0ea5e9;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 12px 0;
+}
+.admonition-title{
+  font-weight: 900;
+  margin: 0 0 8px;
+}
+.admonition.note{ border-left-color: var(--accent, #0ea5e9); }
+.admonition.tip{ border-left-color: #22c55e; }
+.admonition.success{ border-left-color: #22c55e; }
+.admonition.warning{ border-left-color: #f59e0b; }
+.admonition.danger{ border-left-color: #ef4444; }
+
+.tocbox{
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--panel2, #ffffff);
+  border-left: 6px solid var(--accent2, #a78bfa);
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 12px 0 16px;
+}
+.tocbox h3{ margin: 0 0 8px; }
+.tocbox ul{ margin: 0; padding-left: 18px; }
+
+.article ul, .article ol{ padding-left: 18px; }
+.article a{ color: var(--accent, #0ea5e9); }
+
+/* Task list ( - [x] / - [ ] ) */
+ul.task-list { list-style: none; padding-left: 0; }
+li.task-list-item{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding: 10px 12px;
+  border: 1px solid var(--border, #e5e7eb);
+  background: var(--panel, rgba(255,255,255,.06));
+  border-radius: 14px;
+  margin: 10px 0;
+}
+li.task-list-item input[type="checkbox"]{
+  margin-top: 2px;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--good, #22c55e);
+}
+
+/* nice-to-have: checked items look “done” (modern browsers) */
+li.task-list-item:has(input[checked]){
+  opacity: .78;
+}
+li.task-list-item:has(input[checked]) *{
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}

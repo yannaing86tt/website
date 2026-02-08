@@ -1,0 +1,51 @@
+{% extends "public_base.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div class="hero-shimmer"></div>
+    <div class="hero-head">
+      <h1 style="margin:0; font-size:28px;">VPS &amp; Cloudflare</h1>
+      <span class="hero-orb" aria-hidden="true"></span>
+    </div>
+
+    <p style="margin:10px 0 0; color: rgba(232,238,252,.78); line-height:1.6;">
+      VPS, Cloudflare, bots, automation
+    </p>
+
+    <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+      <a class="btn" href="/posts/">View Posts →</a>
+    </div>
+  </section>
+
+  <section style="margin-top:16px;">
+    <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+      <h2 style="margin:0; font-size:18px;">Latest Posts</h2>
+      <a href="/posts/">View all →</a>
+    </div>
+
+    <div class="grid">
+      {% for p in posts %}
+        <a href="/posts/{{ p.slug }}/" style="color:inherit;">
+          <div class="card">
+            {% if p.cover_image %}
+              <img class="thumb" src="{{ p.cover_image.url }}" alt="">
+            {% else %}
+              <div class="thumb thumb-ph"></div>
+            {% endif %}
+
+            <div class="card-body">
+              <div class="meta">{{ p.published_at|default:p.created_at }}</div>
+              <div class="title">{{ p.title }}</div>
+              <div class="excerpt">
+                {% if p.content %}{{ p.content|truncatechars:120 }}{% else %}…{% endif %}
+              </div>
+            </div>
+          </div>
+        </a>
+      {% empty %}
+        <div class="card" style="padding:14px;">No published posts yet.</div>
+      {% endfor %}
+    </div>
+  </section>
+{% endblock %}

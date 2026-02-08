@@ -1,0 +1,42 @@
+{% extends "panel/base.html" %}
+{% block title %}Media{% endblock %}
+
+{% block content %}
+  <h1>Media</h1>
+
+  <p style="margin: 8px 0 14px;">
+    <a href="{% url 'panel_media_new' %}">+ New Media</a>
+  </p>
+
+  <table style="width:100%; border-collapse:collapse;">
+    <thead>
+      <tr style="text-align:left;">
+        <th style="padding:10px; border-bottom:1px solid #e5e7eb;">Title</th>
+        <th style="padding:10px; border-bottom:1px solid #e5e7eb;">Type</th>
+        <th style="padding:10px; border-bottom:1px solid #e5e7eb;">Status</th>
+        <th style="padding:10px; border-bottom:1px solid #e5e7eb;">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in items %}
+        <tr>
+          <td style="padding:10px; border-bottom:1px solid #f1f5f9;">{{ item.title }}</td>
+          <td style="padding:10px; border-bottom:1px solid #f1f5f9;">{{ item.kind }}</td>
+          <td style="padding:10px; border-bottom:1px solid #f1f5f9;">{{ item.status }}</td>
+          <td style="padding:10px; border-bottom:1px solid #f1f5f9; white-space:nowrap;">
+            <a href="{% url 'panel_media_edit' item.pk %}">Edit</a>
+            &nbsp;|&nbsp;
+            <a href="/panel/media/{{ item.pk }}/tracks/">Tracks</a>
+            &nbsp;|&nbsp;
+            <form action="{% url 'panel_media_delete' item.pk %}" method="post" style="display:inline;">
+              {% csrf_token %}
+              <button type="submit" onclick="return confirm('Delete?')">Delete</button>
+            </form>
+          </td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="4" style="padding:12px; opacity:.7;">No media yet.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}

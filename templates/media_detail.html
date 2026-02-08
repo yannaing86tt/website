@@ -1,0 +1,192 @@
+{% extends "public_base.html" %}
+{% block content %}
+<div class="container">
+  <a class="back-link" href="{% url 'media_list' %}">← Back</a>
+
+  <div class="card glass">
+    <h1 class="page-title">{{ item.title }}</h1>
+
+    {% if item.cover_image %}
+      <img src="{{ item.cover_image.url }}" alt="" style="width:100%; height:auto; border-radius: 16px; margin: 12px 0 16px;">
+    {% endif %}
+
+    {% if item.description %}
+      <div class="muted" style="margin-bottom:14px; white-space:pre-wrap;">{{ item.description }}</div>
+    {% endif %}
+
+    {# AUDIO #}
+    {% if item.kind == "audio" %}
+      {% if item.tracks.all %}
+        <div class="track-player">
+          <div class="track-controls">
+            <div class="now">
+              <div class="now-label">Now playing</div>
+              <div id="nowTitle" class="now-title">—</div>
+            </div>
+
+            <div class="controls">
+              <button class="ctrl-btn" id="btnPrev" type="button" title="Prev">⏮</button>
+              <button class="ctrl-btn" id="btnPlay" type="button" title="Play/Pause">▶</button>
+              <button class="ctrl-btn" id="btnNext" type="button" title="Next">⏭</button>
+
+              <button class="ctrl-btn" id="btnRepeat" type="button" title="Repeat One">⟲1</button>
+              <button class="ctrl-btn is-on" id="btnLoop" type="button" title="Loop All (last -> first)">∞</button>
+            </div>
+          </div>
+
+          <audio id="mainAudio" class="track-audio" controls preload="metadata"></audio>
+
+          <ol class="tracklist" id="trackList">
+            {% for t in item.tracks.all %}
+              <li class="track" data-src="{{ t.audio_file.url }}" data-title="{{ t.title|escapejs }}">
+                <button class="t-play" type="button" aria-label="Play">▶</button>
+                <div class="t-meta">
+                  <div class="t-title">{{ t.title }}</div>
+                  <div class="t-sub">Track {{ forloop.counter }}</div>
+                </div>
+              </li>
+            {% endfor %}
+          </ol>
+        </div>
+
+      {% else %}
+        {# Single file fallback #}
+        {% if item.file %}
+          <audio controls style="width:100%;" preload="metadata">
+            <source src="{{ item.file.url }}">
+          </audio>
+        {% else %}
+          <div class="muted">No audio uploaded.</div>
+        {% endif %}
+      {% endif %}
+
+    {# VIDEO #}
+    {% elif item.kind == "video" %}
+      {% if item.video_url %}
+        <div class="muted" style="margin-bottom:10px;">Video URL:</div>
+        <a href="{{ item.video_url }}" target="_blank" rel="noopener">{{ item.video_url }}</a>
+      {% elif item.file %}
+        <video controls style="width:100%; border-radius:16px;">
+          <source src="{{ item.file.url }}">
+        </video>
+      {% else %}
+        <div class="muted">No video uploaded.</div>
+      {% endif %}
+    {% endif %}
+  </div>
+</div>
+
+<script>
+(() => {
+  const list = [...document.querySelectorAll("#trackList .track")];
+  if (!list.length) return;
+
+  const audio = document.getElementById("mainAudio");
+  const nowTitle = document.getElementById("nowTitle");
+
+  const btnPrev = document.getElementById("btnPrev");
+  const btnNext = document.getElementById("btnNext");
+  const btnPlay = document.getElementById("btnPlay");
+  const btnRepeat = document.getElementById("btnRepeat");
+  const btnLoop = document.getElementById("btnLoop");
+
+  let idx = 0;
+  let repeatOne = false;
+  let loopAll = true;
+
+  function syncRowButtons() {
+    list.forEach((el, i) => {
+      const b = el.querySelector(".t-play");
+      if (i === idx && !audio.paused) b.textContent = "⏸";
+      else b.textContent = "▶";
+      el.classList.toggle("is-active", i === idx);
+    });
+  }
+
+  function setTrack(i, autoplay = true) {
+    idx = (i + list.length) % list.length;
+
+    const el = list[idx];
+    const src = el.dataset.src;
+    const title = el.dataset.title || "—";
+
+    nowTitle.textContent = title;
+    audio.src = src;
+    audio.loop = repeatOne;   // repeat one only
+    audio.load();
+
+    syncRowButtons();
+
+    if (autoplay) {
+      audio.play().then(syncRowButtons).catch(() => {
+        // mobile may block unless user gesture
+        syncRowButtons();
+      });
+    }
+  }
+
+  function playPauseToggle() {
+    if (audio.paused) audio.play().then(syncRowButtons).catch(syncRowButtons);
+    else audio.pause();
+  }
+
+  // Row click: if same track -> toggle, else -> play selected
+  list.forEach((el, i) => {
+    el.addEventListener("click", () => {
+      if (i === idx) playPauseToggle();
+      else setTrack(i, true);
+    });
+  });
+
+  btnPrev.addEventListener("click", () => setTrack(idx - 1, true));
+  btnNext.addEventListener("click", () => setTrack(idx + 1, true));
+  btnPlay.addEventListener("click", playPauseToggle);
+
+  btnRepeat.addEventListener("click", () => {
+    repeatOne = !repeatOne;
+    btnRepeat.classList.toggle("is-on", repeatOne);
+    audio.loop = repeatOne;
+  });
+
+  btnLoop.addEventListener("click", () => {
+    loopAll = !loopAll;
+    btnLoop.classList.toggle("is-on", loopAll);
+  });
+
+  audio.addEventListener("play", () => {
+    btnPlay.textContent = "⏸";
+    syncRowButtons();
+  });
+
+  audio.addEventListener("pause", () => {
+    btnPlay.textContent = "▶";
+    syncRowButtons();
+  });
+
+  // Auto next + Loop all (last -> first)
+  audio.addEventListener("ended", () => {
+    if (repeatOne) {
+      // safety (even though audio.loop handles it)
+      audio.currentTime = 0;
+      audio.play().then(syncRowButtons).catch(syncRowButtons);
+      return;
+    }
+
+    if (idx < list.length - 1) {
+      setTrack(idx + 1, true);
+      return;
+    }
+
+    if (loopAll) {
+      setTrack(0, true);   // last -> first (loop)
+    } else {
+      // stop at end
+      audio.pause();
+    }
+  });
+
+  // init first track (no autoplay)
+  setTrack(0, false);
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,136 @@
+{% extends "panel/base.html" %}
+{% block title %}{% if mode == "create" %}New Post{% else %}Edit Post{% endif %}{% endblock %}
+
+{% block content %}
+  <h2 style="margin-top:0;">{% if mode == "create" %}New Post{% else %}Edit Post{% endif %}</h2>
+
+  {% if error %}
+  <div style="padding:10px; background:#ffecec; border:1px solid #ffb3b3; margin:12px 0; border-radius:10px;">
+    {{ error }}
+  </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" style="display:grid; gap:14px;">
+    {% csrf_token %}
+
+    <div>
+      <label style="display:block; margin-bottom:6px;">Title</label>
+      <input name="title" value="{% if post %}{{ post.title }}{% endif %}"
+             style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
+    </div>
+
+    <div>
+      <label style="display:block; margin-bottom:6px;">Slug (optional)</label>
+      <input name="slug" value="{% if post %}{{ post.slug }}{% endif %}"
+             placeholder="auto-generate if empty"
+             style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
+      <div style="font-size:12px; opacity:.75; margin-top:6px; margin-bottom:14px; line-height:1.6;">
+        မြန်မာစာ/space ပါလည်း OK (link အတွက်သုံးမယ်)
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px; flex-wrap:wrap;">
+      <div>
+        <label style="display:block; margin-bottom:6px;">Status</label>
+        <select name="status" style="padding:10px; border-radius:10px; border:1px solid #ddd;">
+          <option value="draft" {% if post and post.status == "draft" %}selected{% endif %}>Draft</option>
+          <option value="published" {% if post and post.status == "published" %}selected{% endif %}>Published</option>
+        </select>
+      </div>
+
+      <div style="flex:1; min-width:260px;">
+        <label style="display:block; margin-bottom:6px;">Video URL (YouTube/Vimeo)</label>
+        <input name="video_url" value="{% if post %}{{ post.video_url }}{% endif %}"
+               style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd;">
+      </div>
+    </div>
+
+    <div>
+      <label style="display:block; margin-bottom:6px;">Cover Image</label>
+      <input type="file" name="cover_image">
+      {% if post and post.cover_image %}
+        <div style="margin-top:8px; font-size:13px;">
+          Current: <a href="{{ post.cover_image.url }}" target="_blank">{{ post.cover_image.url }}</a>
+        </div>
+      {% endif %}
+    </div>
+
+    <div>
+      <label style="display:block; margin-bottom:6px;">Content (Markdown)</label>
+
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:320px;">
+          <textarea id="mdInput" name="content" rows="16"
+            style="width:100%; padding:10px; border-radius:10px; border:1px solid #ddd; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;">{% if post %}{{ post.content }}{% endif %}</textarea>
+          <div style="font-size:12px; opacity:.75; margin-top:6px; line-height:1.5;">
+            Tips: **bold**, _italic_, `code`, ```code block```, - list, # heading
+          </div>
+        </div>
+
+        <div style="flex:1; min-width:320px;">
+          <div style="padding:10px; border-radius:10px; border:1px solid #ddd; background:#fff; min-height: 380px;">
+            <div style="font-size:12px; opacity:.7; margin-bottom:8px;">Preview</div>
+            <div id="mdPreview" style="line-height:1.7;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button style="padding:10px 14px; border-radius:10px; border:1px solid #ddd;">Save</button>
+      <a href="/panel/posts/" style="align-self:center;">Cancel</a>
+    </div>
+  </form>
+
+   <script>
+  const input = document.getElementById("mdInput");
+  const preview = document.getElementById("mdPreview");
+  let t = null;
+
+  async function renderPreview() {
+    preview.innerHTML = "<div style='opacity:.7;'>Loading…</div>";
+
+    const fd = new FormData();
+    fd.append("text", input.value);
+
+    let res;
+    try {
+      res = await fetch("/panel/md-preview/", {
+        method: "POST",
+        credentials: "same-origin",
+        body: fd
+      });
+    } catch (e) {
+      preview.innerHTML = "<div style='opacity:.7;'>Preview error (network)</div>";
+      return;
+    }
+
+    if (!res.ok) {
+      preview.innerHTML = `<div style='opacity:.7;'>Preview error (${res.status})</div>`;
+      return;
+    }
+
+    const ct = (res.headers.get("content-type") || "").toLowerCase();
+    if (!ct.includes("application/json")) {
+      const txt = await res.text();
+      preview.innerHTML = `<div style='opacity:.7;'>Preview error (not json) — maybe redirected to login</div>
+      <pre style="white-space:pre-wrap; font-size:12px; opacity:.7; margin-top:8px;">${txt.slice(0,300)}</pre>`;
+      return;
+    }
+
+    const data = await res.json();
+    preview.innerHTML = data.html || "";
+
+    if (window.decorateCodeBlocks) window.decorateCodeBlocks(preview);
+  }
+
+  function schedule() {
+    clearTimeout(t);
+    t = setTimeout(renderPreview, 250);
+  }
+
+  input.addEventListener("input", schedule);
+  renderPreview();
+</script>
+
+{% endblock %}

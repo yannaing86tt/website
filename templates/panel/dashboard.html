@@ -1,0 +1,14 @@
+{% extends "panel/base.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+  <h2 style="margin-top:0;">Dashboard</h2>
+  <p>Welcome, <b>{{ request.user.username }}</b> ✅</p>
+
+  <ul>
+    <li><a href="/panel/posts/">Posts</a></li>
+    <li>Media (next)</li>
+    <li>Users/Roles (next)</li>
+  </ul>
+{% endblock %}
