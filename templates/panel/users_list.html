@@ -1,4 +1,5 @@
 {% extends "panel/base.html" %}
+{% load user_tags %}
 
 {% block title %}User Management{% endblock %}
 
@@ -50,7 +51,7 @@
               <span style="background: var(--accent-gradient); color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
                 Superadmin
               </span>
-            {% elif user.groups.filter(name='Editor').exists %}
+            {% elif user|has_editor_role %}
               <span style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600;">
                 Editor
               </span>

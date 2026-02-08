@@ -33,12 +33,16 @@ def panel_dashboard(request):
     # Get recent posts
     recent_posts = Post.objects.all().order_by("-updated_at")[:5]
     
+    # Check if user is editor
+    is_editor = request.user.groups.filter(name="Editor").exists()
+    
     context = {
         "total_posts": total_posts,
         "published_posts": published_posts,
         "draft_posts": draft_posts,
         "total_media": total_media,
         "recent_posts": recent_posts,
+        "is_editor": is_editor,
     }
     
     return render(request, "panel/dashboard.html", context)

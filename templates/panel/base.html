@@ -387,7 +387,7 @@
           <div class="sidebar-user-role">
             {% if request.user.is_superuser %}
               Superadmin
-            {% elif request.user.groups.filter(name='Editor').exists %}
+            {% elif is_editor %}
               Editor
             {% else %}
               Staff

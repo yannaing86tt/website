@@ -1,4 +1,5 @@
 {% extends "panel/base.html" %}
+{% load user_tags %}
 
 {% block title %}{% if user_obj %}Edit User{% else %}Add User{% endif %}{% endblock %}
 
@@ -75,10 +76,10 @@
     <div class="form-group">
       <label for="role">Role *</label>
       <select id="role" name="role" style="width: 100%;">
-        <option value="staff" {% if user_obj and not user_obj.is_superuser and not user_obj.groups.filter(name='Editor').exists %}selected{% endif %}>
+        <option value="staff" {% if user_obj and not user_obj.is_superuser and not user_obj|has_editor_role %}selected{% endif %}>
           Staff (No special permissions)
         </option>
-        <option value="editor" {% if user_obj and user_obj.groups.filter(name='Editor').exists %}selected{% endif %}>
+        <option value="editor" {% if user_obj and user_obj|has_editor_role %}selected{% endif %}>
           Editor (Can create posts, cannot delete)
         </option>
         <option value="superadmin" {% if user_obj and user_obj.is_superuser %}selected{% endif %}>

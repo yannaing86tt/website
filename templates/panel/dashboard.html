@@ -99,7 +99,7 @@
         <strong>Role:</strong> 
         {% if request.user.is_superuser %}
           Superadmin (Full Access)
-        {% elif request.user.groups.filter(name='Editor').exists %}
+        {% elif is_editor %}
           Editor (Limited Access)
         {% else %}
           Staff

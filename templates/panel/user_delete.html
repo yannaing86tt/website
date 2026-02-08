@@ -1,4 +1,5 @@
 {% extends "panel/base.html" %}
+{% load user_tags %}
 
 {% block title %}Delete User{% endblock %}
 
@@ -30,7 +31,7 @@
       <strong>Role:</strong> 
       {% if user_to_delete.is_superuser %}
         Superadmin
-      {% elif user_to_delete.groups.filter(name='Editor').exists %}
+      {% elif user_to_delete|has_editor_role %}
         Editor
       {% else %}
         Staff
