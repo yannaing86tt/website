@@ -24,7 +24,7 @@ apt-get update -qq
 
 # Install dependencies
 echo -e "${YELLOW}[2/12] Installing dependencies...${NC}"
-apt-get install -y -qq python3 python3-pip python3-venv nginx git curl certbot python3-certbot-nginx
+apt-get install -y -qq python3 python3-pip python3-venv python3-dev build-essential nginx git curl certbot python3-certbot-nginx
 
 # Collect information
 echo ""
