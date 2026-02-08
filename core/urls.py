@@ -4,8 +4,14 @@ from . import views_posts
 from . import views_public
 from . import views_media
 from . import views_md
+from . import views_auth
 
 urlpatterns = [
+    # Authentication (public)
+    path("register/", views_auth.register_view, name="register"),
+    path("login/", views_auth.login_view, name="login"),
+    path("logout/", views_auth.logout_view, name="logout"),
+    
     # Media (panel)
     path("panel/media/", views_media.panel_media_list, name="panel_media_list"),
     path("panel/media/new/", views_media.panel_media_new, name="panel_media_new"),

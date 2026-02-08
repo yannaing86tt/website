@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 from .models import Post
 import markdown as md
@@ -31,10 +32,12 @@ ALLOWED_ATTRS = {
 }
 ALLOWED_PROTOCOLS = ["http", "https", "mailto"]
 
+@login_required(login_url="/login/")
 def posts_list(request):
     posts = Post.objects.filter(status="published").order_by("-published_at", "-created_at")
     return render(request, "posts_list.html", {"posts": posts})
 
+@login_required(login_url="/login/")
 def post_detail(request, slug):
     post = get_object_or_404(Post, status="published", slug=slug)
     html = md.markdown(
