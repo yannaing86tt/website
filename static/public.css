@@ -31,6 +31,52 @@
   --panel2: rgba(255,255,255,.09);
 }
 
+/* Light theme overrides */
+[data-theme="light"] {
+  --bg: #f6f7fb;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --text: rgba(13, 18, 32, 0.92);
+  --text-muted: rgba(13, 18, 32, 0.6);
+  --border: rgba(0, 0, 0, 0.08);
+  --sidebar-bg: #ffffff;
+  --sidebar-border: rgba(0, 0, 0, 0.08);
+}
+
+[data-theme="light"] body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+[data-theme="light"] .sidebar {
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+}
+
+[data-theme="light"] .nav-link {
+  color: var(--text);
+}
+
+[data-theme="light"] .nav-link:hover {
+  background: rgba(102, 126, 234, 0.1);
+}
+
+[data-theme="light"] .card {
+  background: var(--bg-card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+[data-theme="light"] .hero {
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+}
+
+[data-theme="light"] .hero h1 {
+  color: var(--text);
+}
+
+
+
 /* ===== GLOBAL STYLES ===== */
 * { 
   box-sizing: border-box; 
