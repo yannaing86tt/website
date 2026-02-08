@@ -1,23 +1,287 @@
 {% extends "public_base.html" %}
-{% block title %}{{ post.title }} - ynltestvpn{% endblock %}
+{% block title %}{{ post.title }} - YNL Tech{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Back Button */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    margin-bottom: 30px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    transition: all 0.3s ease;
+  }
+  
+  .back-link:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    transform: translateX(-4px);
+  }
+
+  /* Post Container */
+  .post-container {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 50px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  /* Post Header */
+  .post-header {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .post-title {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 900;
+    margin: 0 0 20px;
+    line-height: 1.2;
+    letter-spacing: -1px;
+    color: var(--text);
+  }
+  
+  .post-meta-info {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    align-items: center;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+  }
+  
+  .post-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  /* Cover Image */
+  .post-cover {
+    width: calc(100% + 100px);
+    margin: -50px -50px 40px -50px;
+    border-radius: 24px 24px 0 0;
+    height: 400px;
+    object-fit: cover;
+  }
+  
+  /* Article Content */
+  .article-content {
+    line-height: 1.8;
+    font-size: 1.1rem;
+    color: var(--text);
+  }
+  
+  .article-content > * {
+    margin: 0 0 1.5em;
+  }
+  
+  .article-content h1,
+  .article-content h2,
+  .article-content h3,
+  .article-content h4 {
+    font-weight: 800;
+    line-height: 1.3;
+    margin: 2em 0 1em;
+    color: var(--text);
+    letter-spacing: -0.5px;
+  }
+  
+  .article-content h1 {
+    font-size: 2.2rem;
+    border-bottom: 3px solid rgba(102, 126, 234, 0.3);
+    padding-bottom: 0.5em;
+  }
+  
+  .article-content h2 {
+    font-size: 1.8rem;
+  }
+  
+  .article-content h3 {
+    font-size: 1.5rem;
+  }
+  
+  .article-content h4 {
+    font-size: 1.25rem;
+  }
+  
+  .article-content p {
+    color: rgba(232, 238, 252, 0.9);
+    margin-bottom: 1.5em;
+  }
+  
+  .article-content a {
+    color: #667eea;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(102, 126, 234, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .article-content a:hover {
+    border-bottom-color: #667eea;
+    color: #764ba2;
+  }
+  
+  .article-content ul,
+  .article-content ol {
+    padding-left: 2em;
+    margin: 1.5em 0;
+  }
+  
+  .article-content li {
+    margin: 0.75em 0;
+    color: rgba(232, 238, 252, 0.9);
+  }
+  
+  .article-content blockquote {
+    border-left: 4px solid #667eea;
+    padding: 1em 1.5em;
+    margin: 2em 0;
+    background: rgba(102, 126, 234, 0.08);
+    border-radius: 0 12px 12px 0;
+    font-style: italic;
+    color: rgba(232, 238, 252, 0.95);
+  }
+  
+  .article-content code {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-family: 'Monaco', 'Courier New', monospace;
+    color: #a78bfa;
+  }
+  
+  .article-content pre {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 20px;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 2em 0;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .article-content pre code {
+    background: none;
+    padding: 0;
+    color: #e6edf7;
+  }
+  
+  .article-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    margin: 2em 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  }
+  
+  .article-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2em 0;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  
+  .article-content th,
+  .article-content td {
+    padding: 12px 16px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    text-align: left;
+  }
+  
+  .article-content th {
+    background: rgba(102, 126, 234, 0.15);
+    font-weight: 700;
+    color: var(--text);
+  }
+  
+  .article-content td {
+    background: rgba(255, 255, 255, 0.03);
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .post-container {
+      padding: 30px 24px;
+      border-radius: 16px;
+    }
+    
+    .post-cover {
+      width: calc(100% + 48px);
+      margin: -30px -24px 30px -24px;
+      height: 250px;
+      border-radius: 16px 16px 0 0;
+    }
+    
+    .post-title {
+      font-size: 1.8rem;
+    }
+    
+    .article-content {
+      font-size: 1rem;
+    }
+    
+    .article-content h1 {
+      font-size: 1.8rem;
+    }
+    
+    .article-content h2 {
+      font-size: 1.5rem;
+    }
+    
+    .article-content h3 {
+      font-size: 1.3rem;
+    }
+  }
+</style>
+{% endblock %}
 
 {% block content %}
-  <p style="margin-top:0;"><a href="/posts/">← Back</a></p>
+  <a href="/posts/" class="back-link">← Back to Posts</a>
 
-  <div class="card" style="padding:14px;">
-    <h1 style="margin: 6px 0 10px; font-size: 26px;">{{ post.title }}</h1>
-
+  <article class="post-container">
     {% if post.cover_image %}
-      <img src="{{ post.cover_image.url }}"
-           style="width:100%; height:auto; border-radius: 14px; margin: 10px 0 14px;">
+      <img src="{{ post.cover_image.url }}" alt="{{ post.title }}" class="post-cover">
     {% endif %}
 
-    <article id="postBody" class="article">
+    <header class="post-header">
+      <h1 class="post-title">{{ post.title }}</h1>
+      
+      <div class="post-meta-info">
+        {% if post.published_at %}
+          <span class="post-meta-item">
+            📅 {{ post.published_at|date:"F d, Y" }}
+          </span>
+        {% endif %}
+        
+        {% if post.author %}
+          <span class="post-meta-item">
+            ✍️ {{ post.author }}
+          </span>
+        {% endif %}
+      </div>
+    </header>
+
+    <div class="article-content" id="postBody">
       {{ content_html|safe }}
-    </article>
-  </div>
+    </div>
+  </article>
 
   <script>
-    window.decorateCodeBlocks(document.getElementById("postBody"));
+    if (window.decorateCodeBlocks) {
+      window.decorateCodeBlocks(document.getElementById("postBody"));
+    }
   </script>
 {% endblock %}

@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Myanmar:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&family=Noto+Sans+Myanmar:wght@300;400;600;700;900&display=swap" rel="stylesheet">
   <title>{% block title %}YNL Tech - Knowledge Sharing Hub{% endblock %}</title>
 
   <link rel="stylesheet" href="/static/public.css?v=1768732013">
@@ -16,73 +16,105 @@
   <style>
     :root {
       --accent-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --bg-dark: #0a0f1c;
+      --bg-card: rgba(255, 255, 255, 0.05);
+      --border: rgba(255, 255, 255, 0.1);
+      --text: rgba(232, 238, 252, 0.95);
+      --text-secondary: rgba(232, 238, 252, 0.7);
     }
     
-    /* Enhanced Header */
+    /* Modern Header with Glass Effect */
     .header {
-      background: var(--bg-card);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 15, 28, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     }
     
     .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding: 15px 16px;
+      padding: 16px 24px;
+      gap: 20px;
     }
     
     .brand {
       font-weight: 900;
-      letter-spacing: .2px;
+      font-size: 1.35rem;
+      letter-spacing: -0.5px;
       color: var(--text);
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      text-decoration: none;
+      transition: transform 0.2s ease;
+    }
+    
+    .brand:hover {
+      transform: translateY(-1px);
     }
     
     .brand::before {
-      content: '💻';
-      font-size: 1.5rem;
+      content: '⚡';
+      font-size: 1.8rem;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
     }
     
     .nav {
       display: flex;
-      gap: 12px;
+      gap: 8px;
       margin-left: auto;
     }
     
     .nav a {
       position: relative;
-      transition: all 0.3s ease;
+      padding: 10px 20px;
+      border-radius: 10px;
       color: var(--text);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.3s ease;
+      border: 1px solid transparent;
     }
     
-    .nav a.active::after {
-      content: '';
-      position: absolute;
-      bottom: -5px;
-      left: 0;
-      right: 0;
-      height: 2px;
+    .nav a:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    
+    .nav a.active {
       background: var(--accent-gradient);
+      color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     }
     
     /* Mobile menu button */
     .menu-toggle {
       display: none;
-      background: none;
-      border: none;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border);
       color: var(--text);
       font-size: 24px;
       cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
+      padding: 10px 14px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
     }
     
     .menu-toggle:hover {
-      background: rgba(255,255,255,.06);
+      background: rgba(255, 255, 255, 0.12);
+      transform: translateY(-1px);
     }
     
     /* Mobile responsive */
@@ -94,19 +126,19 @@
       
       .nav {
         position: fixed;
-        top: 67px;
+        top: 70px;
         right: -100%;
-        background: rgba(10,16,32,.95);
-        backdrop-filter: blur(10px);
+        background: rgba(10, 15, 28, 0.98);
+        backdrop-filter: blur(20px);
         border-left: 1px solid var(--border);
         border-bottom: 1px solid var(--border);
-        border-radius: 0 0 0 18px;
-        padding: 16px;
+        border-radius: 0 0 0 20px;
+        padding: 20px;
         flex-direction: column;
-        gap: 8px;
-        min-width: 200px;
+        gap: 10px;
+        min-width: 220px;
         transition: right 0.3s ease;
-        box-shadow: -4px 4px 20px rgba(0,0,0,.3);
+        box-shadow: -4px 8px 30px rgba(0, 0, 0, 0.5);
       }
       
       .nav.active {
@@ -115,65 +147,76 @@
       
       .nav a {
         display: block;
-        padding: 12px 16px;
+        padding: 14px 20px;
+        text-align: left;
       }
+    }
+    
+    /* Main Content Container */
+    main.container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 24px;
     }
     
     /* Enhanced Footer */
     .footer {
-      margin-top: 60px;
-      padding: 40px 0 20px;
-      background: var(--bg-secondary);
+      margin-top: 80px;
+      padding: 50px 0 30px;
+      background: linear-gradient(180deg, transparent 0%, rgba(10, 15, 28, 0.6) 100%);
       border-top: 1px solid var(--border);
+    }
+    
+    .footer .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+    
+    .footer-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+    }
+    
+    .footer a {
+      color: var(--text);
+      text-decoration: none;
+      transition: color 0.3s ease;
     }
     
     .footer a:hover {
       color: #667eea;
     }
+    
+    .footer-brand {
+      font-weight: 700;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    @media (max-width: 768px) {
+      .footer-content {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
   </style>
-<style>
-  :root{
-    color-scheme: dark;
-    --bg: #0b1220;
-    --card: #0f1a2f;
-    --text: #e6edf7;
-    --muted: #aab7d1;
-    --border: rgba(255,255,255,.08);
-    --accent: #6d7cff;
-  }
-  html,body{background:var(--bg); color:var(--text); margin:0;}
-  a{color:var(--text);}
-  .card, .container, .panel, .box{
-    background:var(--card);
-    border:1px solid var(--border);
-    border-radius:14px;
-  }
-  input, textarea, select{
-    background:#0b1426;
-    color:var(--text);
-    border:1px solid var(--border);
-    border-radius:10px;
-    padding:10px 12px;
-    outline:none;
-  }
-  button{
-    background:var(--accent);
-    color:#fff;
-    border:0;
-    border-radius:12px;
-    padding:10px 14px;
-    cursor:pointer;
-  }
-</style>
   
   {% block extra_css %}{% endblock %}
 </head>
 <body>
   <header class="header">
-    <div class="header-inner container">
+    <div class="header-inner">
       <a class="brand" href="/">YNL Tech</a>
 
-      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+      <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle menu">☰</button>
 
       <nav class="nav" id="mainNav">
         <a href="/" onclick="closeMenu()" class="{% if request.path == '/' %}active{% endif %}">Home</a>
@@ -188,10 +231,19 @@
   </main>
 
   <footer class="footer">
-    <div class="container" style="font-size:13px; color: rgba(232,238,252,.65); padding-top:14px; padding-bottom:14px;">
-      © YanNaingLin
-      <span style="opacity:.55;"> | </span>
-      <a href="https://t.me/knowledgeshareinghub" target="_blank" rel="noopener">Telegram Channel</a>
+    <div class="container">
+      <div class="footer-content">
+        <div>
+          <span class="footer-brand">YNL Tech</span>
+          <span style="opacity: 0.5;"> • </span>
+          <span>© {{ current_year|default:"2026" }} YanNaingLin</span>
+        </div>
+        <div>
+          <a href="https://t.me/knowledgeshareinghub" target="_blank" rel="noopener">📢 Telegram Channel</a>
+          <span style="opacity: 0.5; margin: 0 10px;">|</span>
+          <a href="/posts/">Articles</a>
+        </div>
+      </div>
     </div>
   </footer>
 

@@ -4,19 +4,45 @@
 {% block extra_css %}
 <style>
   /* Hero Section with Gradient */
-  .hero-modern {
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.08) 100%);
-    padding: 60px 20px;
-    border-radius: 16px;
-    margin: 20px 0 30px;
+  .hero-section {
+    position: relative;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.12) 0%, rgba(118, 75, 162, 0.12) 100%);
+    padding: 80px 40px;
+    border-radius: 24px;
+    margin: 20px 0 50px;
     text-align: center;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   }
   
-  .hero-modern h1 {
-    font-size: 2.8rem;
-    font-weight: 700;
-    margin: 0 0 16px;
-    line-height: 1.2;
+  .hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.15) 0%, transparent 70%);
+    animation: heroGlow 8s ease-in-out infinite;
+  }
+  
+  @keyframes heroGlow {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(10px, 10px) scale(1.05); }
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .hero-section h1 {
+    font-size: clamp(2.5rem, 5vw, 3.8rem);
+    font-weight: 900;
+    margin: 0 0 20px;
+    line-height: 1.1;
+    letter-spacing: -1px;
   }
   
   .gradient-text {
@@ -24,185 +50,236 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    display: inline-block;
   }
   
-  .hero-modern p {
-    font-size: 1.15rem;
+  .hero-section p {
+    font-size: 1.25rem;
     color: var(--text-secondary);
-    margin: 0 0 24px;
+    margin: 0 0 35px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.6;
   }
   
   .hero-buttons {
     display: flex;
-    gap: 12px;
+    gap: 16px;
     justify-content: center;
     flex-wrap: wrap;
   }
   
-  .btn-modern {
-    padding: 12px 28px;
-    border-radius: 8px;
+  .btn-hero {
+    padding: 16px 36px;
+    border-radius: 12px;
     text-decoration: none;
-    font-weight: 600;
+    font-weight: 700;
+    font-size: 1.05rem;
     transition: all 0.3s ease;
     display: inline-block;
   }
   
-  .btn-primary-modern {
+  .btn-primary {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.35);
+    border: none;
   }
   
-  .btn-primary-modern:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+  .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
   }
   
-  /* Stats Section */
-  .stats-modern {
-    display: flex;
-    justify-content: center;
-    gap: 40px;
-    padding: 30px 20px;
-    margin: 20px 0;
-    background: var(--bg-secondary);
-    border-radius: 12px;
-  }
-  
-  .stat-item {
-    text-align: center;
-  }
-  
-  .stat-number {
-    font-size: 2.2rem;
-    font-weight: 700;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-  
-  .stat-label {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-    margin-top: 4px;
-  }
-  
-  /* Enhanced Post Grid */
-  .grid-modern {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-    margin-top: 24px;
-  }
-  
-  .card-modern {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    text-decoration: none;
-    color: inherit;
-    display: block;
-  }
-  
-  .card-modern:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-    border-color: #667eea;
-  }
-  
-  .card-modern .thumb {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-  }
-  
-  .card-modern .thumb-ph {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 3rem;
-  }
-  
-  .card-modern .thumb-ph::before {
-    content: '📄';
-  }
-  
-  .card-body-modern {
-    padding: 20px;
-  }
-  
-  .post-meta-modern {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-  }
-  
-  .post-tag-modern {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    font-weight: 600;
-  }
-  
-  .card-modern .title {
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin: 0 0 10px;
-    color: var(--text);
-  }
-  
-  .card-modern .excerpt {
-    color: var(--text-secondary);
-    line-height: 1.5;
-    margin: 0;
-  }
-  
+  /* Section Headers */
   .section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 40px 0 20px;
+    margin: 60px 0 30px;
   }
   
   .section-header h2 {
-    font-size: 1.8rem;
+    font-size: 2rem;
+    font-weight: 900;
     margin: 0;
     position: relative;
+    letter-spacing: -0.5px;
   }
   
   .section-header h2::after {
     content: '';
     display: block;
-    width: 60px;
-    height: 3px;
+    width: 80px;
+    height: 4px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    margin-top: 8px;
+    margin-top: 10px;
     border-radius: 2px;
   }
   
+  .section-header a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+  }
+  
+  .section-header a:hover {
+    color: #667eea;
+  }
+  
+  /* Modern Post Grid */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 30px;
+    margin-top: 30px;
+  }
+  
+  .post-card {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  }
+  
+  .post-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+    border-color: rgba(102, 126, 234, 0.5);
+  }
+  
+  .post-card-image {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+  
+  .post-card-placeholder {
+    width: 100%;
+    height: 220px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 4rem;
+  }
+  
+  .post-card-body {
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    font-size: 0.85rem;
+  }
+  
+  .post-tag {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .post-date {
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  
+  .post-card-title {
+    font-size: 1.4rem;
+    font-weight: 800;
+    margin: 0 0 12px;
+    color: var(--text);
+    line-height: 1.3;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .post-card-excerpt {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin: 0;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  .read-more {
+    margin-top: 16px;
+    color: #667eea;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  
+  .read-more::after {
+    content: '→';
+    transition: transform 0.3s ease;
+  }
+  
+  .post-card:hover .read-more::after {
+    transform: translateX(4px);
+  }
+  
+  /* Empty State */
+  .empty-state {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    color: var(--text-secondary);
+  }
+  
+  /* Responsive */
   @media (max-width: 768px) {
-    .hero-modern h1 {
-      font-size: 2rem;
+    .hero-section {
+      padding: 60px 30px;
+      margin: 10px 0 40px;
     }
     
-    .stats-modern {
-      flex-direction: column;
-      gap: 20px;
+    .hero-section h1 {
+      font-size: 2.2rem;
     }
     
-    .grid-modern {
+    .hero-section p {
+      font-size: 1.1rem;
+    }
+    
+    .posts-grid {
       grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    
+    .section-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 15px;
     }
   }
 </style>
@@ -210,31 +287,17 @@
 
 {% block content %}
   <!-- Hero Section -->
-  <section class="hero-modern">
-    <h1>
-      <span class="gradient-text">နည်းပညာ</span> ခရီးစဉ်
-    </h1>
-    <p>VPS, Cloud Computing, DevOps နှင့် Web Development အကြောင်းအရာများကို လေ့လာပါ</p>
-    <div class="hero-buttons">
-      <a class="btn-modern btn-primary-modern" href="/posts/">Posts များကြည့်ရန် →</a>
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1>
+        <span class="gradient-text">နည်းပညာ</span> ခရီးစဉ်
+      </h1>
+      <p>VPS, Cloud Computing, DevOps နှင့် Web Development အကြောင်းအရာများကို လေ့လာပါ။ အခမဲ့ အသိပညာများ မျှဝေပေးခြင်း။</p>
+      <div class="hero-buttons">
+        <a class="btn-hero btn-primary" href="/posts/">📚 Explore Posts →</a>
+      </div>
     </div>
   </section>
-
-  <!-- Stats Section -->
-  <div class="stats-modern">
-    <div class="stat-item">
-      <div class="stat-number">{{ total_posts|default:"50+" }}</div>
-      <div class="stat-label">Articles</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-number">10K+</div>
-      <div class="stat-label">Readers</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-number">100%</div>
-      <div class="stat-label">Free Content</div>
-    </div>
-  </div>
 
   <!-- Posts Section -->
   <section>
@@ -243,29 +306,31 @@
       <a href="/posts/">View all →</a>
     </div>
 
-    <div class="grid-modern">
+    <div class="posts-grid">
       {% for p in posts %}
-        <a href="/posts/{{ p.slug }}/" class="card-modern">
+        <a href="/posts/{{ p.slug }}/" class="post-card">
           {% if p.cover_image %}
-            <img class="thumb" src="{{ p.cover_image.url }}" alt="{{ p.title }}">
+            <img class="post-card-image" src="{{ p.cover_image.url }}" alt="{{ p.title }}">
           {% else %}
-            <div class="thumb thumb-ph"></div>
+            <div class="post-card-placeholder">📄</div>
           {% endif %}
 
-          <div class="card-body-modern">
-            <div class="post-meta-modern">
-              <span class="post-tag-modern">Tutorial</span>
-              <span>{{ p.published_at|default:p.created_at|date:"M d, Y" }}</span>
+          <div class="post-card-body">
+            <div class="post-meta">
+              <span class="post-tag">Tutorial</span>
+              <span class="post-date">{{ p.published_at|default:p.created_at|date:"M d, Y" }}</span>
             </div>
-            <div class="title">{{ p.title }}</div>
-            <div class="excerpt">
-              {% if p.content %}{{ p.content|striptags|truncatechars:120 }}{% else %}…{% endif %}
-            </div>
+            <h3 class="post-card-title">{{ p.title }}</h3>
+            <p class="post-card-excerpt">
+              {% if p.content %}{{ p.content|striptags|truncatechars:150 }}{% else %}Read more to discover...{% endif %}
+            </p>
+            <span class="read-more">Read More</span>
           </div>
         </a>
       {% empty %}
-        <div class="card" style="padding:20px; text-align:center;">
-          <p>No published posts yet.</p>
+        <div class="empty-state">
+          <p style="font-size: 1.2rem; margin: 0;">📝 No published posts yet.</p>
+          <p style="margin-top: 10px; opacity: 0.7;">Check back soon for new content!</p>
         </div>
       {% endfor %}
     </div>
