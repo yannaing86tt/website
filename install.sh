@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
 # ========= helpers =========
 die(){ echo "❌ $*" >&2; exit 1; }
@@ -242,3 +242,4 @@ echo "➡️  Admin user: ${ADMIN_USER}"
 echo
 info "Service status:"
 systemctl status "${SERVICE_NAME}" --no-pager || true
+
