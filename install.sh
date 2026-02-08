@@ -38,8 +38,8 @@ read -sp "Admin password: " ADMIN_PASS
 echo ""
 read -p "Admin email: " ADMIN_EMAIL
 
-# Generate secret key
-SECRET_KEY=$(python3 -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())")
+# Generate secret key (using openssl instead of Django to avoid dependency issue)
+SECRET_KEY=$(openssl rand -base64 50 | tr -d "=+/" | cut -c1-50)
 
 # Set installation directory
 INSTALL_DIR="/opt/mysite"
