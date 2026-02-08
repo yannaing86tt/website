@@ -100,6 +100,7 @@
     
     .theme-toggle-box {
       display: none !important;
+      display: none !important;
       margin-top: 12px;
       padding: 12px;
       background: rgba(102, 126, 234, 0.1);
@@ -336,7 +337,7 @@
     function toggleTheme() {
       const html = document.documentElement;
       const body = document.body;
-      const currentTheme = body.getAttribute('data-theme') || 'light';
+      const currentTheme = body.getAttribute('data-theme') || 'dark';
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
       
       body.setAttribute('data-theme', newTheme);
@@ -350,7 +351,7 @@
     
     // Load saved theme on page load
     window.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('theme') || 'light';
+      const savedTheme = localStorage.getItem('theme') || 'dark';
       const html = document.documentElement;
       const body = document.body;
       
