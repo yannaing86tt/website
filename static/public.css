@@ -506,3 +506,49 @@ pre button:hover, .codehilite button:hover {
 [data-theme="dark"] .hero {
   background: linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.04));
 }
+
+/* Light theme - Post content text visibility */
+[data-theme="light"] .article-content,
+[data-theme="light"] .article-content p,
+[data-theme="light"] .article-content li,
+[data-theme="light"] .article-content h1,
+[data-theme="light"] .article-content h2,
+[data-theme="light"] .article-content h3,
+[data-theme="light"] .article-content h4,
+[data-theme="light"] .post-title,
+[data-theme="light"] .post-meta,
+[data-theme="light"] .card-title,
+[data-theme="light"] .card-text,
+[data-theme="light"] .card-excerpt {
+  color: rgba(13, 18, 32, 0.92) !important;
+}
+
+[data-theme="light"] .article-content a {
+  color: #667eea !important;
+}
+
+[data-theme="light"] .article-content code {
+  background: rgba(0, 0, 0, 0.05);
+  color: #d63384;
+}
+
+[data-theme="light"] .article-content pre {
+  background: #f8f9fa;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-theme="light"] .article-content pre code {
+  color: #212529;
+}
+
+[data-theme="light"] .article-content blockquote {
+  border-left-color: #667eea;
+  background: rgba(102, 126, 234, 0.05);
+  color: rgba(13, 18, 32, 0.85);
+}
+
+[data-theme="light"] h1, 
+[data-theme="light"] h2, 
+[data-theme="light"] h3 {
+  color: rgba(13, 18, 32, 0.95) !important;
+}
