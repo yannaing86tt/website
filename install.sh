@@ -65,7 +65,7 @@ read_tty DB_USER "PostgreSQL DB user" 0 "mysiteuser"
 read_tty DB_PASS "PostgreSQL DB password" 1
 
 # repo settings (change defaults to your repo)
-read_tty REPO_URL "GitHub repo URL (https://github.com/<you>/<repo>.git)"
+read_tty REPO_URL "GitHub repo URL" 0 "https://github.com/yannaing86tt/new_website.git"
 read_tty REPO_BRANCH "Repo branch" 0 "main"
 
 APP_DIR="/opt/mysite"
