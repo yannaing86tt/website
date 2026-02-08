@@ -335,7 +335,7 @@
     function toggleTheme() {
       const html = document.documentElement;
       const body = document.body;
-      const currentTheme = body.getAttribute('data-theme') || 'light';
+      const currentTheme = body.getAttribute('data-theme') || 'dark';
       const newTheme = currentTheme === 'light' ? 'dark' : 'light';
       
       body.setAttribute('data-theme', newTheme);
@@ -349,7 +349,7 @@
     
     // Load saved theme on page load
     window.addEventListener('DOMContentLoaded', () => {
-      const savedTheme = localStorage.getItem('theme') || 'light';
+      const savedTheme = localStorage.getItem('theme') || 'dark';
       const html = document.documentElement;
       const body = document.body;
       
