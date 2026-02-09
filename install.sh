@@ -208,6 +208,13 @@ NGINXEOF
 # Enable site and remove default
 rm -f /etc/nginx/sites-enabled/default
 ln -sf /etc/nginx/sites-available/mysite /etc/nginx/sites-enabled/
+
+# Ensure nginx.conf includes sites-enabled directory
+if ! grep -q "include /etc/nginx/sites-enabled" /etc/nginx/nginx.conf; then
+    echo -e "${YELLOW}Adding sites-enabled include to nginx.conf...${NC}"
+    sed -i '/http {/a \    include /etc/nginx/sites-enabled/*;' /etc/nginx/nginx.conf
+fi
+
 nginx -t
 systemctl start nginx
 
