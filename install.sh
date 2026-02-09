@@ -31,14 +31,21 @@ echo ""
 echo -e "${GREEN}Please provide the following information:${NC}"
 echo ""
 
-read -p "Domain name (e.g., example.com): " DOMAIN
-read -p "Website name: " SITE_NAME
-read -p "Admin username: " ADMIN_USER
-read -sp "Admin password: " ADMIN_PASS
+# Use -r flag to prevent backslash escapes and handle input properly
+read -r -p "Domain name (e.g., example.com): " DOMAIN
+read -r -p "Website name: " SITE_NAME
+read -r -p "Admin username: " ADMIN_USER
+read -r -s -p "Admin password: " ADMIN_PASS
 echo ""
-read -p "Admin email: " ADMIN_EMAIL
+read -r -p "Admin email: " ADMIN_EMAIL
 
-# Generate secret key (using openssl instead of Django to avoid dependency issue)
+# Strip any control characters from inputs
+DOMAIN=$(echo "$DOMAIN" | tr -cd '[:alnum:].-')
+SITE_NAME=$(echo "$SITE_NAME" | tr -cd '[:alnum:] _-')
+ADMIN_USER=$(echo "$ADMIN_USER" | tr -cd '[:alnum:]_-')
+ADMIN_EMAIL=$(echo "$ADMIN_EMAIL" | tr -cd '[:alnum:]@._-')
+
+# Generate secret key using openssl
 SECRET_KEY=$(openssl rand -base64 50 | tr -d "=+/" | cut -c1-50)
 
 # Set installation directory
@@ -106,6 +113,7 @@ After=network.target
 User=www-data
 Group=www-data
 WorkingDirectory=$INSTALL_DIR
+EnvironmentFile=$INSTALL_DIR/.env
 Environment="DJANGO_SETTINGS_MODULE=config.settings"
 
 ExecStart=$INSTALL_DIR/.venv/bin/gunicorn \\
@@ -121,6 +129,7 @@ Restart=always
 WantedBy=multi-user.target
 SERVICEEOF
 
+# Enable and start service
 systemctl daemon-reload
 systemctl enable mysite.service
 systemctl start mysite.service
@@ -129,7 +138,10 @@ systemctl start mysite.service
 echo -e "${YELLOW}[11/12] Configuring Nginx...${NC}"
 cat > /etc/nginx/sites-available/mysite << NGINXEOF
 server {
+    listen 80;
     server_name $DOMAIN www.$DOMAIN;
+
+    client_max_body_size 700M;
 
     location /static/ {
         alias $INSTALL_DIR/staticfiles/;
@@ -143,32 +155,36 @@ server {
 
     location / {
         proxy_pass http://127.0.0.1:8001;
-        proxy_set_header Host \\\$host;
-        proxy_set_header X-Real-IP \\\$remote_addr;
-        proxy_set_header X-Forwarded-For \\\$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \\\$scheme;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
         proxy_read_timeout 300;
         proxy_connect_timeout 300;
         proxy_send_timeout 300;
     }
-
-    listen 80;
 }
 NGINXEOF
 
-# Upload limits
-cat > /etc/nginx/conf.d/upload_limit.conf << UPLOADEOF
-client_max_body_size 700M;
-UPLOADEOF
-
+# Enable site
 ln -sf /etc/nginx/sites-available/mysite /etc/nginx/sites-enabled/
-rm -f /etc/nginx/sites-enabled/default
 nginx -t
 systemctl reload nginx
 
-# Setup SSL
-echo -e "${YELLOW}[12/12] Setting up SSL certificate...${NC}"
-certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos --email $ADMIN_EMAIL --redirect
+# Configure firewall
+echo -e "${YELLOW}Configuring firewall...${NC}"
+if command -v ufw &> /dev/null; then
+    ufw allow 80/tcp
+    ufw allow 443/tcp
+    echo -e "${GREEN}Firewall configured (ports 80, 443)${NC}"
+fi
+
+# Configure SSL
+echo -e "${YELLOW}[12/12] Configuring SSL certificate...${NC}"
+certbot --nginx -d $DOMAIN -d www.$DOMAIN --non-interactive --agree-tos --register-unsafely-without-email || {
+    echo -e "${YELLOW}SSL certificate setup failed. You can run it manually later:${NC}"
+    echo -e "certbot --nginx -d $DOMAIN -d www.$DOMAIN"
+}
 
 echo ""
 echo -e "${GREEN}================================${NC}"
@@ -176,8 +192,9 @@ echo -e "${GREEN}Installation Complete!${NC}"
 echo -e "${GREEN}================================${NC}"
 echo ""
 echo -e "Website: ${GREEN}https://$DOMAIN${NC}"
-echo -e "Admin Panel: ${GREEN}https://$DOMAIN/admin${NC}"
-echo -e "Username: ${GREEN}$ADMIN_USER${NC}"
+echo -e "Admin Panel: ${GREEN}https://$DOMAIN/panel/${NC}"
+echo -e "Admin Login: ${GREEN}$ADMIN_USER${NC}"
 echo ""
-echo -e "${YELLOW}Important: Save your credentials in a safe place!${NC}"
+echo -e "${YELLOW}Note: If SSL setup failed, run manually:${NC}"
+echo -e "certbot --nginx -d $DOMAIN -d www.$DOMAIN"
 echo ""
