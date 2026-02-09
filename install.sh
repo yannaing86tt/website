@@ -42,14 +42,30 @@ read -r -s -p "Admin password: " ADMIN_PASS
 echo ""
 read -r -p "Admin email: " ADMIN_EMAIL
 
-# Strip any control characters from inputs
-DOMAIN=$(echo "$DOMAIN" | tr -cd '[:alnum:].-')
-SITE_NAME=$(echo "$SITE_NAME" | tr -cd '[:alnum:] _-')
-FOOTER_NAME=$(echo "$FOOTER_NAME" | tr -cd '[:alnum:] _-')
-TELEGRAM_URL=$(echo "$TELEGRAM_URL" | tr -cd '[:alnum:]/:._-')
-FACEBOOK_URL=$(echo "$FACEBOOK_URL" | tr -cd '[:alnum:]/:._-')
-ADMIN_USER=$(echo "$ADMIN_USER" | tr -cd '[:alnum:]_-')
-ADMIN_EMAIL=$(echo "$ADMIN_EMAIL" | tr -cd '[:alnum:]@._-')
+# Strip control characters and validate inputs
+DOMAIN=$(echo "$DOMAIN" | tr -d '[:cntrl:]' | tr -cd '[:alnum:].-')
+SITE_NAME=$(echo "$SITE_NAME" | tr -d '[:cntrl:]')
+FOOTER_NAME=$(echo "$FOOTER_NAME" | tr -d '[:cntrl:]')
+TELEGRAM_URL=$(echo "$TELEGRAM_URL" | tr -d '[:cntrl:]')
+FACEBOOK_URL=$(echo "$FACEBOOK_URL" | tr -d '[:cntrl:]')
+ADMIN_USER=$(echo "$ADMIN_USER" | tr -d '[:cntrl:]' | tr -cd '[:alnum:]_-')
+ADMIN_EMAIL=$(echo "$ADMIN_EMAIL" | tr -d '[:cntrl:]')
+
+# Validate required fields
+if [ -z "$DOMAIN" ]; then
+    echo -e "${RED}Error: Domain name is required${NC}"
+    exit 1
+fi
+
+if [ -z "$ADMIN_USER" ]; then
+    echo -e "${RED}Error: Admin username is required${NC}"
+    exit 1
+fi
+
+if [ -z "$ADMIN_PASS" ]; then
+    echo -e "${RED}Error: Admin password is required${NC}"
+    exit 1
+fi
 
 # Generate secret key using openssl (remove newlines)
 SECRET_KEY=$(openssl rand -base64 50 | tr -d "\n=+/" | cut -c1-50)
