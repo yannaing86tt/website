@@ -24,7 +24,11 @@ apt-get update -qq
 
 # Install dependencies
 echo -e "${YELLOW}[2/12] Installing dependencies...${NC}"
-apt-get install -y -qq python3 python3-pip python3-venv python3-dev build-essential nginx git curl certbot python3-certbot-nginx
+apt-get install -y -qq python3 python3-pip python3-venv python3-dev build-essential git curl certbot
+# Install nginx separately and stop it immediately
+apt-get install -y -qq nginx
+systemctl stop nginx
+apt-get install -y -qq python3-certbot-nginx
 
 # Collect information
 echo ""
@@ -197,10 +201,11 @@ server {
 }
 NGINXEOF
 
-# Enable site
+# Enable site and remove default
+rm -f /etc/nginx/sites-enabled/default
 ln -sf /etc/nginx/sites-available/mysite /etc/nginx/sites-enabled/
 nginx -t
-systemctl reload nginx
+systemctl start nginx
 
 # Configure firewall
 echo -e "${YELLOW}Configuring firewall...${NC}"
