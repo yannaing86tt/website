@@ -171,6 +171,10 @@ systemctl start mysite.service
 
 # Configure Nginx
 echo -e "${YELLOW}[11/12] Configuring Nginx...${NC}"
+# Ensure directories exist
+mkdir -p /etc/nginx/sites-available
+mkdir -p /etc/nginx/sites-enabled
+
 cat > /etc/nginx/sites-available/mysite << NGINXEOF
 server {
     listen 80;
