@@ -109,6 +109,9 @@ TELEGRAM_URL=$TELEGRAM_URL
 FACEBOOK_URL=$FACEBOOK_URL
 ENVFILE
 
+# Export ALLOWED_HOSTS for immediate use
+export DJANGO_ALLOWED_HOSTS="$DOMAIN,www.$DOMAIN"
+
 # Create media directories
 echo -e "${YELLOW}[7/12] Creating media directories...${NC}"
 mkdir -p media/covers media/library media/library_covers media/library_tracks
