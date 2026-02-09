@@ -6,7 +6,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+Myanmar:wght@300;400;600;700&display=swap" rel="stylesheet">
-  <title>{% block title %}YNL Tech - Knowledge Sharing Hub{% endblock %}</title>
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
   
   <link rel="stylesheet" href="/static/codehilite.css">
   <script src="/static/copycode.js"></script>
@@ -352,7 +352,7 @@
   <div class="public-layout">
     <aside class="sidebar" id="sidebar">
       <div class="sidebar-header">
-        <a href="/" class="sidebar-brand">YNL Tech</a>
+        <a href="/" class="sidebar-brand">{{ SITE_NAME }}</a>
         <div class="theme-toggle-box">
           <span class="theme-label">Theme</span>
           <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
@@ -384,13 +384,22 @@
         </div>
         
         <div class="nav-divider"></div>
-        
+        {% if TELEGRAM_URL %}
         <div class="nav-item">
-          <a href="https://t.me/knowledgeshareinghub" target="_blank" class="nav-link">
+          <a href="{{ TELEGRAM_URL }}" target="_blank" class="nav-link">
             <span class="nav-icon">📢</span>
             Telegram
           </a>
         </div>
+        {% endif %}
+        {% if FACEBOOK_URL %}
+        <div class="nav-item">
+          <a href="{{ FACEBOOK_URL }}" target="_blank" class="nav-link">
+            <span class="nav-icon">📘</span>
+            Facebook
+          </a>
+        </div>
+        {% endif %}
       </nav>
       
       {% if user.is_authenticated %}
@@ -418,7 +427,7 @@
         <footer class="footer">
           <div class="footer-content">
             <div>
-              <strong>YNL Tech</strong> • © {{ current_year|default:"2026" }} YanNaingLin
+              <strong>{{ SITE_NAME }}</strong> • © {{ current_year|default:"2026" }} {{ FOOTER_NAME }}
             </div>
             <div>
               <a href="/posts/">Articles</a>

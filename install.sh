@@ -34,6 +34,9 @@ echo ""
 # Use -r flag to prevent backslash escapes and handle input properly
 read -r -p "Domain name (e.g., example.com): " DOMAIN
 read -r -p "Website name: " SITE_NAME
+read -r -p "Footer name (copyright owner): " FOOTER_NAME
+read -r -p "Telegram channel URL (optional, press Enter to skip): " TELEGRAM_URL
+read -r -p "Facebook page URL (optional, press Enter to skip): " FACEBOOK_URL
 read -r -p "Admin username: " ADMIN_USER
 read -r -s -p "Admin password: " ADMIN_PASS
 echo ""
@@ -42,6 +45,9 @@ read -r -p "Admin email: " ADMIN_EMAIL
 # Strip any control characters from inputs
 DOMAIN=$(echo "$DOMAIN" | tr -cd '[:alnum:].-')
 SITE_NAME=$(echo "$SITE_NAME" | tr -cd '[:alnum:] _-')
+FOOTER_NAME=$(echo "$FOOTER_NAME" | tr -cd '[:alnum:] _-')
+TELEGRAM_URL=$(echo "$TELEGRAM_URL" | tr -cd '[:alnum:]/:._-')
+FACEBOOK_URL=$(echo "$FACEBOOK_URL" | tr -cd '[:alnum:]/:._-')
 ADMIN_USER=$(echo "$ADMIN_USER" | tr -cd '[:alnum:]_-')
 ADMIN_EMAIL=$(echo "$ADMIN_EMAIL" | tr -cd '[:alnum:]@._-')
 
@@ -78,6 +84,9 @@ DJANGO_DEBUG=0
 DJANGO_ALLOWED_HOSTS=$DOMAIN,www.$DOMAIN
 SITE_NAME=$SITE_NAME
 SITE_URL=https://$DOMAIN
+FOOTER_NAME=$FOOTER_NAME
+TELEGRAM_URL=$TELEGRAM_URL
+FACEBOOK_URL=$FACEBOOK_URL
 ENVFILE
 
 # Create media directories

@@ -58,6 +58,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'core.context_processors.site_settings',
             ],
         },
     },
@@ -103,3 +104,10 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 DATA_UPLOAD_MAX_MEMORY_SIZE = 700 * 1024 * 1024
 FILE_UPLOAD_MAX_MEMORY_SIZE = 700 * 1024 * 1024
+
+# Site configuration
+SITE_NAME = os.getenv("SITE_NAME", "YNL Tech")
+SITE_URL = os.getenv("SITE_URL", "https://example.com")
+FOOTER_NAME = os.getenv("FOOTER_NAME", "YanNaingLin")
+TELEGRAM_URL = os.getenv("TELEGRAM_URL", "")
+FACEBOOK_URL = os.getenv("FACEBOOK_URL", "")
