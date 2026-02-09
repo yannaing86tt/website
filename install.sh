@@ -45,8 +45,8 @@ SITE_NAME=$(echo "$SITE_NAME" | tr -cd '[:alnum:] _-')
 ADMIN_USER=$(echo "$ADMIN_USER" | tr -cd '[:alnum:]_-')
 ADMIN_EMAIL=$(echo "$ADMIN_EMAIL" | tr -cd '[:alnum:]@._-')
 
-# Generate secret key using openssl
-SECRET_KEY=$(openssl rand -base64 50 | tr -d "=+/" | cut -c1-50)
+# Generate secret key using openssl (remove newlines)
+SECRET_KEY=$(openssl rand -base64 50 | tr -d "\n=+/" | cut -c1-50)
 
 # Set installation directory
 INSTALL_DIR="/opt/mysite"
