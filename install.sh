@@ -102,6 +102,12 @@ PYEOF
 # Collect static files
 python3 manage.py collectstatic --noinput
 
+# Fix database permissions for SQLite
+chown www-data:www-data db.sqlite3
+chmod 664 db.sqlite3
+chown www-data:www-data .
+chmod 775 .
+
 # Create Gunicorn service
 echo -e "${YELLOW}[10/12] Setting up Gunicorn service...${NC}"
 cat > /etc/systemd/system/mysite.service << SERVICEEOF
