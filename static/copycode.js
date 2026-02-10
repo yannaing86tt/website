@@ -24,15 +24,28 @@ window.decorateCodeBlocks = function(root) {
       btn.style.right = "8px";
       btn.style.padding = "6px 10px";
       btn.style.borderRadius = "10px";
-      btn.style.border = "1px solid #ddd";
-      btn.style.background = "#fff";
+      btn.style.border = "1px solid rgba(102, 126, 234, 0.3)";
+      btn.style.background = "rgba(102, 126, 234, 0.9)";
+      btn.style.color = "#ffffff";
       btn.style.cursor = "pointer";
       btn.style.fontSize = "12px";
+      btn.style.fontWeight = "600";
+      btn.style.transition = "all 0.3s ease";
       // ✅ Prevent button from being selected
       btn.style.userSelect = "none";
       btn.style.webkitUserSelect = "none";
       btn.style.mozUserSelect = "none";
       btn.style.msUserSelect = "none";
+
+      btn.addEventListener("mouseover", () => {
+        btn.style.background = "rgba(102, 126, 234, 1)";
+        btn.style.transform = "translateY(-2px)";
+      });
+
+      btn.addEventListener("mouseout", () => {
+        btn.style.background = "rgba(102, 126, 234, 0.9)";
+        btn.style.transform = "translateY(0)";
+      });
 
       btn.addEventListener("click", async () => {
         const text = pre.innerText;
@@ -47,8 +60,12 @@ window.decorateCodeBlocks = function(root) {
           document.body.removeChild(ta);
         }
         const old = btn.textContent;
-        btn.textContent = "Copied";
-        setTimeout(() => (btn.textContent = old), 900);
+        btn.textContent = "Copied!";
+        btn.style.background = "rgba(16, 185, 129, 0.9)";
+        setTimeout(() => {
+          btn.textContent = old;
+          btn.style.background = "rgba(102, 126, 234, 0.9)";
+        }, 900);
       });
 
       box.prepend(btn);
@@ -64,9 +81,9 @@ window.decorateCodeBlocks = function(root) {
 
     pre.style.position = "relative";
     pre.style.paddingTop = "38px";
-    pre.style.border = "1px solid #e5e7eb";
+    pre.style.border = "1px solid #2d3748";
     pre.style.borderRadius = "10px";
-    pre.style.background = "#f9fafb";
+    pre.style.background = "#1a202c";
     pre.style.overflow = "auto";
 
     const btn = document.createElement("button");
@@ -77,15 +94,28 @@ window.decorateCodeBlocks = function(root) {
     btn.style.right = "8px";
     btn.style.padding = "6px 10px";
     btn.style.borderRadius = "10px";
-    btn.style.border = "1px solid #ddd";
-    btn.style.background = "#fff";
+    btn.style.border = "1px solid rgba(102, 126, 234, 0.3)";
+    btn.style.background = "rgba(102, 126, 234, 0.9)";
+    btn.style.color = "#ffffff";
     btn.style.cursor = "pointer";
     btn.style.fontSize = "12px";
+    btn.style.fontWeight = "600";
+    btn.style.transition = "all 0.3s ease";
     // ✅ Prevent button from being selected
     btn.style.userSelect = "none";
     btn.style.webkitUserSelect = "none";
     btn.style.mozUserSelect = "none";
     btn.style.msUserSelect = "none";
+
+    btn.addEventListener("mouseover", () => {
+      btn.style.background = "rgba(102, 126, 234, 1)";
+      btn.style.transform = "translateY(-2px)";
+    });
+
+    btn.addEventListener("mouseout", () => {
+      btn.style.background = "rgba(102, 126, 234, 0.9)";
+      btn.style.transform = "translateY(0)";
+    });
 
     btn.addEventListener("click", async () => {
       const text = code.innerText;
@@ -100,8 +130,12 @@ window.decorateCodeBlocks = function(root) {
         document.body.removeChild(ta);
       }
       const old = btn.textContent;
-      btn.textContent = "Copied";
-      setTimeout(() => (btn.textContent = old), 900);
+      btn.textContent = "Copied!";
+      btn.style.background = "rgba(16, 185, 129, 0.9)";
+      setTimeout(() => {
+        btn.textContent = old;
+        btn.style.background = "rgba(102, 126, 234, 0.9)";
+      }, 900);
     });
 
     pre.prepend(btn);
