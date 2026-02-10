@@ -28,6 +28,11 @@ window.decorateCodeBlocks = function(root) {
       btn.style.background = "#fff";
       btn.style.cursor = "pointer";
       btn.style.fontSize = "12px";
+      // ✅ Prevent button from being selected
+      btn.style.userSelect = "none";
+      btn.style.webkitUserSelect = "none";
+      btn.style.mozUserSelect = "none";
+      btn.style.msUserSelect = "none";
 
       btn.addEventListener("click", async () => {
         const text = pre.innerText;
@@ -76,6 +81,11 @@ window.decorateCodeBlocks = function(root) {
     btn.style.background = "#fff";
     btn.style.cursor = "pointer";
     btn.style.fontSize = "12px";
+    // ✅ Prevent button from being selected
+    btn.style.userSelect = "none";
+    btn.style.webkitUserSelect = "none";
+    btn.style.mozUserSelect = "none";
+    btn.style.msUserSelect = "none";
 
     btn.addEventListener("click", async () => {
       const text = code.innerText;
